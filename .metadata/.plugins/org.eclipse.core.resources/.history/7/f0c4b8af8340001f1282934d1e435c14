@@ -1,0 +1,17 @@
+package com.example.SpringDemoProject.exception;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class NameNotFoundException extends RuntimeException {
+
+	
+    public NameNotFoundException() {
+        super();
+    }
+
+    public NameNotFoundException(String message) {
+        super(message);
+    }
+}
+

@@ -1,0 +1,13 @@
+package com.example.SpringDemoProject.exception;
+
+public class NameNotFoundException extends RuntimeException {
+
+    public NameNotFoundException() {
+        super();
+    }
+
+    public NameNotFoundException(String message) {
+        super(message);
+    }
+}
+

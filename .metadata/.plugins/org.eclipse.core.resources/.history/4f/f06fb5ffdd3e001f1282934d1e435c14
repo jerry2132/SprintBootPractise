@@ -1,0 +1,39 @@
+package com.example.SpringDemoProject.apiResponse;
+
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class ApiResponse<T> {
+
+	private String status;
+	private String message;
+	private List<T> data;
+	
+	private T data2;
+
+	public ApiResponse(String status, String message, List<T> data) {
+		super();
+		this.status = status;
+		this.message = message;
+		this.data = data;
+	}
+
+	public ApiResponse(String status, String message, T data2) {
+		super();
+		this.status = status;
+		this.message = message;
+		this.data2 = data2;
+	}
+	
+	
+	
+	
+
+}

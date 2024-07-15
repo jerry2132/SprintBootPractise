@@ -1,0 +1,5 @@
+package com.example.SpringDemoProject.apiResponse;
+
+public class ApiResponse {
+
+}

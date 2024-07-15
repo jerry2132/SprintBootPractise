@@ -1,0 +1,5 @@
+package com.example.SpringDemoProject.exception;
+
+public class FileStorageException {
+
+}

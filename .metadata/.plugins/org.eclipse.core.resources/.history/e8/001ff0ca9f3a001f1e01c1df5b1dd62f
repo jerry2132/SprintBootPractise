@@ -1,0 +1,39 @@
+package com.example.SpringDemoProject.controller;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.SpringDemoProject.dto.College;
+
+@RestController
+public class CollegeController {
+	
+	List<College> col = new ArrayList<>();
+	
+	@GetMapping("/getDate")
+	public String getDate() {
+		
+		return LocalDate.now()+"hjkad";
+	}
+	
+	@PostMapping("/saveCollege")
+	public void saveCollegeDetails(College college) {
+		
+		col.add(college);
+		
+		
+	}
+	
+	@GetMapping("/getCollegeDetails")
+	public List<College> getCollegeDetails(){
+		
+		
+		return col;
+	}
+
+}

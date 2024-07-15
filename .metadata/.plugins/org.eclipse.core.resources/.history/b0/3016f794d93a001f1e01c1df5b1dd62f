@@ -1,0 +1,54 @@
+package com.example.SpringDemoProject.controller;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.SpringDemoProject.dto.College;
+
+@RestController
+public class CollegeController {
+	
+	List<College> col = new ArrayList<>();
+	
+	@GetMapping("/getDate")
+	public String getDate() {
+		
+		return LocalDate.now()+"hjkad";
+	}
+	
+	@PostMapping("/saveCollege")
+	public String  saveCollegeDetails(@RequestBody College college) {
+
+		if(college != null && hasNullOrZeroFields(college)) {
+			col.add(college);
+			return "saved";
+			
+		}else {
+			
+			return " not saved";
+		}
+		
+	}
+	
+	
+	@GetMapping("/getCollegeDetails")
+	public List<College> getCollegeDetails(){
+		
+		
+		return col;
+	}
+	
+	private boolean hasNullOrZeroFields(College college) {
+		// TODO Auto-generated method stub
+		return college.getId() != 0 && college.getCollegeName() != null && college.getType() != null && college.getAddress() != null;
+	}
+
+
+}

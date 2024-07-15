@@ -1,0 +1,27 @@
+package com.example.SpringDemoProject.service;
+
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.example.SpringDemoProject.apiResponse.ApiResponse;
+import com.example.SpringDemoProject.dto.College;
+
+@Service
+public interface CollegeInterface {
+	
+public String saveCollege(College college);
+
+public ResponseEntity<ApiResponse<College>> getCollegeDetails();
+
+public String saveMultipleCollege(List<College> college);
+
+public ResponseEntity<ApiResponse<College>> saveMultipleCollegeWithValidation(List<College> college);
+
+public ResponseEntity<ApiResponse<College>> findCollegeById(int collegeId);
+
+public ResponseEntity<ApiResponse<College>> findAllByName(String name);
+
+}

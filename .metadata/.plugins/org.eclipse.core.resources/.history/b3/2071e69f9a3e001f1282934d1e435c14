@@ -1,0 +1,108 @@
+package com.example.SpringDemoProject.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.example.SpringDemoProject.apiResponse.ApiResponse;
+import com.example.SpringDemoProject.dao.CollegeDao;
+import com.example.SpringDemoProject.dto.College;
+
+@Service
+public class CollegeImpl implements CollegeInterface {
+
+	// List<College> col = new ArrayList<>();
+
+	@Autowired
+	private CollegeDao collegeDao;
+
+	@Override
+	public String saveCollege(College college) {
+
+		if (college != null && hasNullOrZeroFields(college)) {
+			collegeDao.saveCollegeDao(college);
+			return "saved";
+
+		} else {
+
+			return " not saved";
+		}
+	}
+
+	private boolean hasNullOrZeroFields(College college) {
+		// TODO Auto-generated method stub
+		return college.getId() != 0 && !(college.getCollegeName() == null || college.getCollegeName().equals("null"))
+				&& !(college.getType() == null || college.getType().equals("null"))
+				&& !(college.getAddress() == null || college.getAddress().equals("null"));
+	}
+
+	@Override
+	public List<College> getCollegeDetails() {
+		// TODO Auto-generated method stub
+		return collegeDao.getAllCollege();
+	}
+
+	@Override
+	public String saveMultipleCollege(List<College> college) {
+		// TODO Auto-generated method stub
+		if (!college.isEmpty()) {
+			collegeDao.saveMultipleCollege(college);
+			return "saved";
+		} else {
+			return "not saved";
+		}
+
+	}
+
+	@Override
+	public String saveMultipleCollegeWithValidation(List<College> college) {
+		// TODO Auto-generated method stub
+
+		List<College> college3 = new ArrayList<>();
+		for (College college2 : college) {
+
+			if (college2 != null && hasNullOrZeroFields(college2)) {
+				college3.add(college2);
+			} else {
+				return "not saved , some   entity is null" + college2;
+			}
+		}
+
+		collegeDao.saveMultipleCollege(college3);
+
+		return "saved successfully";
+	}
+
+	@Override
+	public ResponseEntity<Object> findCollegeById(int collegeId) {
+		// TODO Auto-generated method stub
+		
+		if(collegeId != 0) {
+			Optional<College> optionalCollege = collegeDao.findCollegeById(collegeId);
+			if(optionalCollege.isPresent()) {
+				College college = optionalCollege.get();
+				
+				return new ResponseEntity<>(college,HttpStatusCode.valueOf(200));
+			}else
+				return new ResponseEntity<>("id not found",HttpStatusCode.valueOf(404));
+		}
+		return new ResponseEntity<>("id can not be  0 ",HttpStatusCode.valueOf(404));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<College>>> findAllByName(String name) {
+		// TODO Auto-generated method stub
+			
+		List<College> college = collegeDao.findByName(name);
+		
+		return new ResponseEntity<ApiResponse<College>>("bhjds","uyghjkn",);
+	}
+
+
+
+}

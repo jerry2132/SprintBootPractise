@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"> <!--
+	bean definitions here -->
+	<bean id="a" class="com.sts.project.springCoreSimpleXMLProject.App" />
+	<bean id="b" class="com.sts.project.springCoreSimpleXMLProject.interfaces.Flipkart" />
+	<bean id="c" class="com.sts.project.springCoreSimpleXMLProject.interfaces.PayTm" />
+
+	
+	
+	<bean id="product" class="com.sts.project.springCoreSimpleXMLProject.DI.Product">
+	
+		<property name="id" value="25"></property>
+		<property name="name" value="djf"></property>
+	
+	
+	</bean>
+	
+	<bean id="employee" class="com.sts.project.springCoreSimpleXMLProject.DI.Employee">
+	<constructor-arg value="20" name="id"></constructor-arg>
+	<constructor-arg value="sjdb" name="sdnm"></constructor-arg>
+	<constructor-arg value="552.22" name="salary"></constructor-arg>
+	
+	</bean>
+	
+</beans>
+

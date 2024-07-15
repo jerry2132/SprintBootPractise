@@ -1,0 +1,5 @@
+package com.example.SpringDemoProject.repository;
+
+public class CollegeRepository {
+
+}

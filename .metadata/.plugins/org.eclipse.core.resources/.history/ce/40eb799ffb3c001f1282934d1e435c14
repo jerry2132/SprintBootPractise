@@ -1,0 +1,39 @@
+package com.example.SpringDemoProject.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.SpringDemoProject.dto.College;
+
+@Service
+public class CollegeImpl implements CollegeInterface{
+
+	List<College> col = new ArrayList<>();
+	
+	@Override
+	public String saveCollege(College college) {
+		
+		if(college != null && hasNullOrZeroFields(college)) {
+			col.add(college);
+			return "saved";
+			
+		}else {
+			
+			return " not saved";
+		}
+	}
+
+	private boolean hasNullOrZeroFields(College college) {
+		// TODO Auto-generated method stub
+		return college.getId() != 0 && college.getCollegeName() != null && college.getType() != null && college.getAddress() != null;
+	}
+
+	@Override
+	public List<College> getCollegeDetails() {
+		// TODO Auto-generated method stub
+		return col;
+	}
+
+}
