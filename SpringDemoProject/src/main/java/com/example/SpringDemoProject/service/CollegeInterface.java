@@ -33,4 +33,6 @@ public ResponseEntity<ApiResponse<List<College>>> findAllByName(String name);
 public ResponseEntity<ApiResponse<List<College>>> sortByField(String field);
 
 public ResponseEntity<ApiResponse<List<College>>> sortAndPaginationGetAll(String field , Integer offset,Integer pageSize);
+
+public ResponseEntity<ApiResponse<College>> deleteCollege(College college);
 }

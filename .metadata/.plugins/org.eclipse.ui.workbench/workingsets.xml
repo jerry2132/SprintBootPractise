@@ -7,4 +7,5 @@
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/springCoreSimpleAnnotationProject" type="4"/>
 </workingSet>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1719380256218_2" label="Window Working Set" name="Aggregate for window 1719380256218"/>
+<mruList name="stsProjects"/>
 </workingSetManager>

@@ -44,7 +44,7 @@ public class CollegeDao {
 	}
 	
 	
-	public List<College> finCollegeBySorting(String field){
+	public List<College> findCollegeBySorting(String field){
 		
 		return collegeRepository.findAll(Sort.by(field));
 	}
@@ -55,6 +55,11 @@ public class CollegeDao {
 		Page<College> col = collegeRepository.findAll(PageRequest.of(offSet,pageSize).withSort(Sort.by(field)));
 		
 		return col.getContent();
+	}
+	
+	
+	public void deleteById(int id) {
+		 collegeRepository.deleteById(id);
 	}
 
 }

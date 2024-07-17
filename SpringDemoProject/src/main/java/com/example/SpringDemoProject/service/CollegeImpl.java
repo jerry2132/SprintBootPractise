@@ -3,6 +3,7 @@ package com.example.SpringDemoProject.service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -89,11 +90,11 @@ public class CollegeImpl implements CollegeInterface {
 
 		String filePath = path + File.separator + uniqueFilename;
 
-		//System.out.println("original path from application file === " + path);
+		// System.out.println("original path from application file === " + path);
 
 		File directory = new File(path);
 
-		//System.out.println("file destination === " + directory);
+		// System.out.println("file destination === " + directory);
 
 		if (!directory.exists()) {
 
@@ -134,36 +135,33 @@ public class CollegeImpl implements CollegeInterface {
 		ApiResponse<List<College>> response = new ApiResponse<>("error ", "no college to show", college);
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
-	
-	
 
 	@Override
 	public ResponseEntity<ApiResponse<List<College>>> saveMultipleCollege(List<College> college, MultipartFile[] file) {
 		// TODO Auto-generated method stub
 		String uniquefileName = null;
-		
+
 //		System.out.println(file.length);
-		
-		
+
 		if (college.isEmpty() || file == null || file.length != college.size()) {
 			ApiResponse<List<College>> response = new ApiResponse<>("error ",
 					"something wrong file or college is empty or" + "length of files and college data is not equal",
 					null);
 			return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 		}
-		
+
 		List<College> college2 = new ArrayList<>();
 
 		for (int i = 0; i < college.size(); i++) {
 
 			College col = college.get(i);
 			Optional<College> optionalCollege = collegeDao.findCollegeById(col.getId());
-			
-			if(optionalCollege.isPresent()) {
-				
+
+			if (optionalCollege.isPresent()) {
+
 				throw new IdAlreadyPresent("This college id is already present");
 			}
-			
+
 			MultipartFile tempFile = file[i];
 
 			uniquefileName = storeImage(tempFile);
@@ -174,13 +172,11 @@ public class CollegeImpl implements CollegeInterface {
 			collegeDao.saveCollegeDao(col);
 
 		}
-		
-		ApiResponse<List<College>> response = new ApiResponse<>("success","data saved suucessfully",college);
-		return new ResponseEntity<>(response , HttpStatus.CREATED);
+
+		ApiResponse<List<College>> response = new ApiResponse<>("success", "data saved suucessfully", college);
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
 
 	}
-	
-	
 
 	@Override
 	public ResponseEntity<ApiResponse<List<College>>> saveMultipleCollegeWithValidation(List<College> college) {
@@ -227,8 +223,6 @@ public class CollegeImpl implements CollegeInterface {
 		ApiResponse<College> response = new ApiResponse<>("errror", "id found can not be 0", null);
 		return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 	}
-	
-	
 
 	@Override
 	public ResponseEntity<ApiResponse<List<College>>> findAllByName(String name) {
@@ -256,15 +250,11 @@ public class CollegeImpl implements CollegeInterface {
 		}
 
 	}
-	
-	
 
 	public boolean fieldMatch(String field) {
 
 		return field.equals("collegeName") || field.equals("id") || field.equals("address") || field.equals("type");
 	}
-	
-	
 
 	@Override
 	public ResponseEntity<ApiResponse<List<College>>> sortByField(String field) {
@@ -275,7 +265,7 @@ public class CollegeImpl implements CollegeInterface {
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 
-		List<College> colleges = collegeDao.finCollegeBySorting(field);
+		List<College> colleges = collegeDao.findCollegeBySorting(field);
 		if (colleges.isEmpty()) {
 			ApiResponse<List<College>> response = new ApiResponse<>("error", "No data found for field: " + field, null);
 			return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
@@ -304,31 +294,85 @@ public class CollegeImpl implements CollegeInterface {
 		}
 
 		ApiResponse<List<College>> response = new ApiResponse<>("success", "Data sorted by " + field, college);
+		// ApiResponse<T> response1 =
+		// ApiResponse.builder().status("success").message("data sorted by
+		// "+field).data(college);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
+	
+	
 
 	@Override
-	public ResponseEntity<ApiResponse<College>> updateCollege(Integer id , String name) {
+	public ResponseEntity<ApiResponse<College>> updateCollege(Integer id, String name) {
 		// TODO Auto-generated method stub
-		
+
 		Optional<College> col = collegeDao.findCollegeById(id);
-		
-		if(col.isPresent()) {
-			
+
+		if (col.isPresent()) {
+
 			College college = col.get();
-			
+
 			college.setCollegeName(name);
 			collegeDao.saveCollegeDao(college);
-			
-			
+
 			ApiResponse<College> response = new ApiResponse<>("success", "name updated ", college);
 			return new ResponseEntity<>(response, HttpStatus.OK);
-			
+
 		}
-		
+
 		ApiResponse<College> response = new ApiResponse<>("error", "id not found", null);
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	}
+	
+	
+
+	@Override
+	public ResponseEntity<ApiResponse<College>> deleteCollege(College college) {
+
+		if (college.getId() == 0) {
+
+			ApiResponse<College> response = new ApiResponse<>("error", "id can not be 0", null);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
+		}
+
+		Optional<College> col = collegeDao.findCollegeById(college.getId());
+
+		if (col.isEmpty()) {
+
+			ApiResponse<College> response = new ApiResponse<>("error", "id not present", null);
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		}
+
+		College college1 = col.get();
+
+		String uniqueFileName = college1.getImageUrl();
+
+		deleteImageFromStorage(uniqueFileName);
+		
+		collegeDao.deleteById(college1.getId());
+
+		ApiResponse<College> response = new ApiResponse<>("success", "successfully deleted", college1);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	public static void deleteImageFromStorage(String imageName)  {
+
+		if (imageName == null || imageName == "") {
+			return ;
+
+		}
+
+		Path imagePath = Paths.get(path, imageName);
+
+		try {
+			Files.deleteIfExists(imagePath);
+		}catch(Exception e) {
+			throw new FileStorageException("file doesnot exist");
+			
+		}
+
 	}
 
 }

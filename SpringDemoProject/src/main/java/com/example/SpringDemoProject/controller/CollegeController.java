@@ -8,6 +8,7 @@ import javax.naming.NameNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,6 +102,14 @@ public class CollegeController {
 public ResponseEntity<ApiResponse<College>> updateCollege(@PathVariable  Integer id, @PathVariable String name){
 	
 	return collegeInterface.updateCollege(id,name);
+	
+}
+
+
+@DeleteMapping("/deleteCollege")
+public ResponseEntity<ApiResponse<College>> deleteCollege(@RequestBody College college){
+	
+	return collegeInterface.deleteCollege(college);
 	
 }
 	
