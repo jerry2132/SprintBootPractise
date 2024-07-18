@@ -1,6 +1,6 @@
 package com.example.demo.dao;
 
-import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,6 +20,15 @@ public class PersonDao {
 		return personRepo.save(person);
 	}
 	
+	public Optional<Person> findPersonById(int personId) {
+		
+	return	personRepo.findById(personId);
+	}
+	
+	public void deletePerson(Person person) {
+		
+		personRepo.delete(person);
+	}
 
 	
 }

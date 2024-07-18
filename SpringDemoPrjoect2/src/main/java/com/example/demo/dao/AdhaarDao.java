@@ -19,4 +19,8 @@ public class AdhaarDao {
 		return adhaarRepo.findById(adhaarNumber);
 	}
 	
+	public void deleteAdhaar(Adhaar adhaar) {
+		adhaarRepo.delete(adhaar);
+	}
+	
 }

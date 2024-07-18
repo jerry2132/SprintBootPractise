@@ -2,15 +2,17 @@ package com.example.demo.entity;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -28,15 +30,19 @@ private int id;
 @NotEmpty(message="can not  be empty or null")
 private String name;
 
-@JsonIgnore
-@NotNull(message = "Date of birth cannot be null")
+//@JsonIgnore
+//@NotNull(message = "Date of birth cannot be null")
 @Past(message = "Date of birth must be in the past")
 private LocalDate dob;
 
-
+//@JsonIgnore
 private int age;
 
+
 @OneToOne(cascade = CascadeType.ALL)
+@Valid
+//@JsonBackReference
+@JsonManagedReference
 private Adhaar adhaar;
 
 

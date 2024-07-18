@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +69,165 @@ public class PersonImpl implements PersonInterface{
 			System.out.println(age);
 			return age.getYears();
 		
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseApi<Person>> updatePersonName(Person person, int personId) {
+		// TODO Auto-generated method stub
+		
+		Optional<Person> optionalPerson = personDao.findPersonById(personId);
+		
+		if(optionalPerson.isEmpty() || optionalPerson == null) {
+			throw new IdError("id not present for modification");
+		}
+		
+		Person newPerson  = optionalPerson.get();
+//		
+//		if(newPerson.getDob() != null)
+//			person.setAge(calculateAge(person.getDob()));
+		
+		newPerson.setName(person.getName());
+		
+		personDao.savePerson(newPerson);
+		
+		ResponseApi<Person> response = ResponseApi.<Person>builder().status("success").message("person updated ")
+				.data(newPerson).build();
+		return new ResponseEntity<ResponseApi<Person>>(response,HttpStatus.OK);
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseApi<Adhaar>> getAdhaarByPersonId(int id) {
+		// TODO Auto-generated method stub
+		
+		Optional<Person> optionalPerson  = personDao.findPersonById(id);
+		
+		
+		if(optionalPerson.isPresent()) {
+			
+			Person person = optionalPerson.get();
+			
+			Adhaar adhaar = person.getAdhaar();
+			
+			ResponseApi<Adhaar> response = ResponseApi.<Adhaar>builder().status("success").message("adhaar found")
+					.data(adhaar).build();
+			
+			return new ResponseEntity<ResponseApi<Adhaar>>(response,HttpStatus.OK);
+			
+		}
+		
+		ResponseApi<Adhaar> response = ResponseApi.<Adhaar>builder().status("error").message("no person found by this id")
+				.data(null).build();
+		return new ResponseEntity<ResponseApi<Adhaar>>(response,HttpStatus.OK);
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseApi<Person>> getPersonByAdhaarNumber(long number) {
+		// TODO Auto-generated method stub
+		
+		Optional<Adhaar> optionalAdhaar= adhaarDao.findPersonById(number);
+		
+		if(optionalAdhaar.isPresent()) {
+			
+			Adhaar adhaar  = optionalAdhaar.get();
+			
+			Person person  = adhaar.getPerson();
+			
+			ResponseApi<Person> response = ResponseApi.<Person>builder().status("success").message("person found")
+					.data(person).build();
+			
+			return new ResponseEntity<ResponseApi<Person>>(response,HttpStatus.OK);
+			
+		}
+		ResponseApi<Person> response = ResponseApi.<Person>builder().status("error").message("no adhaar found by this id")
+				.data(null).build();
+		
+		return new ResponseEntity<ResponseApi<Person>>(response,HttpStatus.OK);
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseApi<Person>> deletePersonByPersonId(int personId) {
+		// TODO Auto-generated method stub
+		
+		Optional<Person> optionalPerson = personDao.findPersonById(personId);
+		
+		if(optionalPerson.isPresent()) {
+			
+			Person person  = optionalPerson.get();
+			
+			personDao.deletePerson(person);
+			
+			ResponseApi<Person> response = ResponseApi.<Person>builder().status("success").message("person deleted")
+					.data(person).build();
+			return new ResponseEntity<ResponseApi<Person>>(response,HttpStatus.OK);
+			
+		}
+		
+		ResponseApi<Person> response = ResponseApi.<Person>builder().status("error").message("no peron found by this id")
+				.data(null).build();
+		
+		return new ResponseEntity<ResponseApi<Person>>(response,HttpStatus.NOT_FOUND);
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseApi<Adhaar>> deleteAdhaarByPersonId(int personId) {
+		// TODO Auto-generated method stub
+		
+		Optional<Person> optionalPerson  = personDao.findPersonById(personId);
+		
+		if(optionalPerson.isPresent()) {
+			
+			Person person = optionalPerson.get();
+			
+			Adhaar adhaar  = person.getAdhaar();
+			
+			person.setAdhaar(null);
+			
+			adhaarDao.deleteAdhaar(adhaar);
+			
+			ResponseApi<Adhaar> response = ResponseApi.<Adhaar>builder().status("success").message("adhaar deleted")
+					.data(adhaar).build();
+			return new ResponseEntity<ResponseApi<Adhaar>>(response,HttpStatus.OK);
+			
+		}
+		
+		ResponseApi<Adhaar> response = ResponseApi.<Adhaar>builder().status("error").message("no peron found by this id")
+				.data(null).build();
+		
+		return new ResponseEntity<ResponseApi<Adhaar>>(response,HttpStatus.NOT_FOUND);
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseApi<Adhaar>> deleteAdhaarByAdhaarNumber(Long number) {
+		// TODO Auto-generated method stub
+		
+		Optional<Adhaar> optionalAdhaar = adhaarDao.findPersonById(number);
+		
+		if(optionalAdhaar.isPresent()) {
+			
+			Adhaar adhaar = optionalAdhaar.get();
+			
+			Person person = adhaar.getPerson();
+			
+			person.setAdhaar(null);
+			
+			adhaarDao.deleteAdhaar(adhaar);
+
+			ResponseApi<Adhaar> response = ResponseApi.<Adhaar>builder().status("success").message("adhaar deleted")
+					.data(adhaar).build();
+			return new ResponseEntity<ResponseApi<Adhaar>>(response,HttpStatus.OK);
+			
+		}
+		
+		ResponseApi<Adhaar> response = ResponseApi.<Adhaar>builder().status("error").message("no peron found by this id")
+				.data(null).build();
+		
+		return new ResponseEntity<ResponseApi<Adhaar>>(response,HttpStatus.NOT_FOUND);
 	}
 
 }
