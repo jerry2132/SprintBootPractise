@@ -1,5 +1,7 @@
 package com.example.demo.ServiceInterface;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ public interface StudentInterface {
 	
 	public ResponseEntity<ResponseApi<Student>> associateStudentToSubject(Student sudent);
 
+	public ResponseEntity<ResponseApi<List<Student>>> getAllStudents(int offset, int pageSize);
 }
 
 

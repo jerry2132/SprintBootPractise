@@ -1,7 +1,9 @@
 package com.example.demo.ServiceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,15 +54,13 @@ public class StudentImpl implements StudentInterface {
 
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
-	
-	
 
 	@Override
 	public ResponseEntity<ResponseApi<Student>> associateStudentToSubject(Student student) {
 		// TODO Auto-generated method stub
 
-		int studentId= student.getId().getStudentId();
-		System.out.println("Student id = "+ studentId);
+		int studentId = student.getId().getStudentId();
+		System.out.println("Student id = " + studentId);
 		System.out.println(student.getSubject());
 		Optional<Student> optionalStudent = studentDao.findByStudentKeyStudentId(studentId);
 
@@ -70,10 +70,14 @@ public class StudentImpl implements StudentInterface {
 
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
-		
+
+		List<Subject> invalid = new ArrayList<>();
+		List<Subject> alreadyAssocaited = new ArrayList<>();
+		List<Subject> valid = new ArrayList<>();
+
 		Student student2 = optionalStudent.get();
-		
-		System.out.println("sutdent is ==  "+student2);
+
+		System.out.println("sutdent is ==  " + student2);
 
 		List<Subject> subjectList = student.getSubject();
 
@@ -84,10 +88,12 @@ public class StudentImpl implements StudentInterface {
 				Optional<Subject> optionalSubject = subjectDao.findBySubjectId(subject2.getId());
 
 				if (optionalSubject.isEmpty() || optionalSubject == null) {
-					ResponseApi<Student> response = ResponseApi.<Student>builder().status("error")
-							.message("no subject found by this id").data(null).build();
+//					ResponseApi<Student> response = ResponseApi.<Student>builder().status("error")
+//							.message("no subject found by this id").data(null).build();
+//
+//					return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
-					return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+					invalid.add(subject2);
 
 				}
 
@@ -98,31 +104,55 @@ public class StudentImpl implements StudentInterface {
 
 					if (subject.getStudent() != null) {
 
+						alreadyAssocaited.add(subject);
 //						ResponseApi<Student> response = ResponseApi.<Student>builder().status("error")
 //								.message("subject id "+subject.getId()+"is already associated").data(null).build();
 //
 //						return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-						
-						throw new IdException("Id is already associated to some other student ");
 
+//						throw new IdException("Id is already associated to some other student " + subject.getId());
+
+					} else {
+
+						subject.setStudent(student2);
+						subjectDao.saveSingleSubject(subject);
+						System.out.println("Subject is " + subject);
+						valid.add(subject2);
 					}
-						
-					subject.setStudent(student2);
-					subjectDao.saveSingleSubject(subject);
-					System.out.println("Subject is "+subject);
 
 				}
-					
-			}
-			
-			//subjectDao.saveSubject(subjectList);
-			
-			//System.out.println(subjectList);
-			
-			ResponseApi<Student> response = ResponseApi.<Student>builder().status("success")
-					.message("students are suucessfully assocaited " + "with the subject").data(student2).build();
 
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			}
+
+			// subjectDao.saveSubject(subjectList);
+
+			// System.out.println(subjectList);
+
+			String errrorMessage = invalid.isEmpty() ? ""
+					: "Following subject id is not present in the database "
+							+ invalid.stream().map(subject -> subject.getId() + " ").collect(Collectors.joining(" , "));
+
+			String alreadyPresent = alreadyAssocaited.isEmpty() ? ""
+					: "Following subjectId is already associated to some other student " + alreadyAssocaited.stream()
+							.map(subject -> subject.getId() + " ").collect(Collectors.joining(" , "));
+
+			String finalMessage = (errrorMessage.isEmpty() ? "" : errrorMessage)
+					+ (alreadyPresent.isEmpty() ? "" : " | "+alreadyPresent);
+			
+			
+
+			if (!valid.isEmpty()) {
+				ResponseApi<Student> response = ResponseApi.<Student>builder().status("success").message(finalMessage)
+						.data(student2).build();
+
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			} else {
+
+				ResponseApi<Student> response = ResponseApi.<Student>builder().status("success").message(finalMessage)
+						.data(null).build();
+
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			}
 
 		}
 
@@ -131,6 +161,17 @@ public class StudentImpl implements StudentInterface {
 
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
+	}
+
+	@Override
+	public ResponseEntity<ResponseApi<List<Student>>> getAllStudents(int offset, int pageSize) {
+		// TODO Auto-generated method stub
+
+		List<Student> studentList = studentDao.getAllStudent(offset, pageSize);
+		ResponseApi<List<Student>> response = ResponseApi.<List<Student>>builder().status("success")
+				.message("Student List ").data(studentList).build();
+
+		return new ResponseEntity<>(response, HttpStatus.FOUND);
 	}
 
 }

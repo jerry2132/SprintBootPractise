@@ -13,4 +13,8 @@ public interface SubjectInterface {
 
 	public ResponseEntity<ResponseApi<List<Subject>>> saveSubject(List<Subject> sub);
 	
+	public ResponseEntity<ResponseApi<List<Subject>>> getAllSubject(Integer offset,Integer pageSize);
+	
+	public ResponseEntity<ResponseApi<List<Subject>>> assocaiteSubjectToPresentStudent(List<Subject> sub);
+	
 }
