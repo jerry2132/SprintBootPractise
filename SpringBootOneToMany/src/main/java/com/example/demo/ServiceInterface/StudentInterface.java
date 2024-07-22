@@ -17,6 +17,10 @@ public interface StudentInterface {
 	public ResponseEntity<ResponseApi<Student>> associateStudentToSubject(Student sudent);
 
 	public ResponseEntity<ResponseApi<List<Student>>> getAllStudents(int offset, int pageSize);
+	
+	public ResponseEntity<ResponseApi<Student>> deleteStudentByStudentId(int studentId);
+	
+	public ResponseEntity<ResponseApi<Student>> deleteOnlyStudent(int studentId);
 }
 
 

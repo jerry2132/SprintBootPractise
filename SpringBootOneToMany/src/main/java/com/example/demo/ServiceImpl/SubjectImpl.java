@@ -30,6 +30,12 @@ public class SubjectImpl implements SubjectInterface {
 	public ResponseEntity<ResponseApi<List<Subject>>> saveSubject(List<Subject> sub) {
 		// TODO Auto-generated method stub
 
+		List<Subject> alreadyAssociated = new ArrayList<>();
+		List<Subject> valid = new ArrayList<>();
+
+		List<Subject> subjectList = subjectDao.getAllSubjectsDao();
+		
+		
 		if (sub.isEmpty() || sub == null) {
 
 			ResponseApi<List<Subject>> response = ResponseApi.<List<Subject>>builder().status("error")
@@ -37,9 +43,43 @@ public class SubjectImpl implements SubjectInterface {
 			return new ResponseEntity<ResponseApi<List<Subject>>>(response, HttpStatus.NOT_ACCEPTABLE);
 		}
 
-		subjectDao.saveSubject(sub);
+		if (!sub.isEmpty() || sub != null) {
+			for (Subject subject : sub) {
+					
+//				System.out.println("Subject is "+subject);
+//				System.out.println(subjectList.contains(subject));
+				if (subjectList.contains(subject)) {
+					alreadyAssociated.add(subject);
+				}
+
+				else {
+
+					valid.add(subject);
+				}
+			}
+		}
+
+		if(!valid.isEmpty() && valid != null) {
+			
+			subjectDao.saveAll(valid);
+		}
+		
+//		System.out.println("valid subjeects  "+valid);
+//		System.out.println("already present "+alreadyAssociated);
+		
+		String alreadyPresent = alreadyAssociated.isEmpty() ? "" : "Following subjects are already saved in the database try adding "
+				+ "new subjects "
+			+alreadyAssociated.stream().map(subject -> subject.getId()+" ").collect(Collectors.joining(" , "));
+		
+		String validSubjects = valid.isEmpty() ? " " : "Followin subjects are saved in the database " + valid.stream()
+				.map(subject -> subject.getId()+" ").collect(Collectors.joining(" , "));
+		
+		String finalMessage = (alreadyPresent.isEmpty() ? " ": alreadyPresent) +  (validSubjects.isEmpty() ? " " : " | "+
+			validSubjects);
+		
+		//subjectDao.saveSubject(sub);
 		ResponseApi<List<Subject>> response = ResponseApi.<List<Subject>>builder().status("success")
-				.message("subjects saved").data(sub).build();
+				.message(finalMessage).data(valid).build();
 		return new ResponseEntity<ResponseApi<List<Subject>>>(response, HttpStatus.OK);
 	}
 
@@ -125,6 +165,28 @@ public class SubjectImpl implements SubjectInterface {
 		ResponseApi<List<Subject>> response = ResponseApi.<List<Subject>>builder().status("success")
 				.message(finalMessage).data(valid).build();
 		return new ResponseEntity<ResponseApi<List<Subject>>>(response, HttpStatus.ACCEPTED);
+	}
+
+	@Override
+	public ResponseEntity<ResponseApi<Subject>> deleteSubjectById(int id) {
+
+		Optional<Subject> optionalSubject = subjectDao.findBySubjectId(id);
+
+		if (optionalSubject.isEmpty() || optionalSubject == null) {
+
+			ResponseApi<Subject> response = ResponseApi.<Subject>builder().status("error").message("id not dound")
+					.data(null).build();
+			return new ResponseEntity<ResponseApi<Subject>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		Subject subject = optionalSubject.get();
+
+		// subject.setStudent(null);
+		subjectDao.deleteSubject(subject);
+
+		ResponseApi<Subject> response = ResponseApi.<Subject>builder().status("success").message("Subject deleted")
+				.data(subject).build();
+		return new ResponseEntity<ResponseApi<Subject>>(response, HttpStatus.OK);
 	}
 
 }

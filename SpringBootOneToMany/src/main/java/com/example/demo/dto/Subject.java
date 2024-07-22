@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -43,9 +45,29 @@ public class Subject {
 //		this.student = student;
 //	}
 
+	
+	
+	
 	@Override
 	public String toString() {
 		return "Subject [id=" + id + ", subjectId=" + subjectId + ", author=" + author + ", name=" + name + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(author, id, name, student, subjectId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Subject other = (Subject) obj;
+		return id == other.id && subjectId == other.subjectId;
 	}
 
 

@@ -42,5 +42,9 @@ public class StudentDao {
 		Page<Student> stu = studentRepo.findAll(PageRequest.of(offset, pageSize));
 		return stu.getContent();
 	}
+	
+	public void deleteStudent(Student student) {
+		studentRepo.delete(student);
+	}
 
 }

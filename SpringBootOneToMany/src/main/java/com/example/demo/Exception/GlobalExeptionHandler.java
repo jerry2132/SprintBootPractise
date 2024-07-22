@@ -14,7 +14,7 @@ public class GlobalExeptionHandler {
 	@ExceptionHandler(IdException.class)
 	public ResponseEntity<ResponseApi<Student>> idExceptionHandler(IdException e){
 		
-		ResponseApi<Student> response = ResponseApi.<Student>builder().status("error").message("id is already associated")
+		ResponseApi<Student> response = ResponseApi.<Student>builder().status("error").message(e.getMessage())
 				.data(null).build();
 		return new ResponseEntity<ResponseApi<Student>>(response,HttpStatus.ALREADY_REPORTED);
 	}

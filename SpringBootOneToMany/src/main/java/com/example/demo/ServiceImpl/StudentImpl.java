@@ -28,8 +28,8 @@ public class StudentImpl implements StudentInterface {
 
 	@Override
 	public ResponseEntity<ResponseApi<Student>> saveStudent(Student student) {
-		// TODO Auto-generated method stub
-
+		// TODO Auto-generated method stub		
+		
 		if (student != null) {
 
 			if (student.getSubject() != null) {
@@ -135,11 +135,14 @@ public class StudentImpl implements StudentInterface {
 			String alreadyPresent = alreadyAssocaited.isEmpty() ? ""
 					: "Following subjectId is already associated to some other student " + alreadyAssocaited.stream()
 							.map(subject -> subject.getId() + " ").collect(Collectors.joining(" , "));
+			
+			String validMessage = valid.isEmpty() ? ""
+					: "Following Subject id's are successfully assocaited with the Student "
+							+ valid.stream().map(subject -> subject.getId() + " ").collect(Collectors.joining(" , "));
 
-			String finalMessage = (errrorMessage.isEmpty() ? "" : errrorMessage)
-					+ (alreadyPresent.isEmpty() ? "" : " | "+alreadyPresent);
-			
-			
+			String finalMessage = (validMessage.isEmpty() ? "" : validMessage)
+					+ (errrorMessage.isEmpty() ? "" : " | " + errrorMessage)
+					+ (alreadyPresent.isEmpty() ? "" : " | " + alreadyPresent);
 
 			if (!valid.isEmpty()) {
 				ResponseApi<Student> response = ResponseApi.<Student>builder().status("success").message(finalMessage)
@@ -172,6 +175,60 @@ public class StudentImpl implements StudentInterface {
 				.message("Student List ").data(studentList).build();
 
 		return new ResponseEntity<>(response, HttpStatus.FOUND);
+	}
+
+	@Override
+	public ResponseEntity<ResponseApi<Student>> deleteStudentByStudentId(int studentId) {
+		// TODO Auto-generated method stub
+
+		Optional<Student> optionalStudent = studentDao.findByStudentKeyStudentId(studentId);
+
+		if (optionalStudent.isEmpty() || optionalStudent == null) {
+			ResponseApi<Student> response = ResponseApi.<Student>builder().status("error")
+					.message("Student with this id is not present").data(null).build();
+
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+		}
+
+		Student student = optionalStudent.get();
+
+		studentDao.deleteStudent(student);
+
+		ResponseApi<Student> response = ResponseApi.<Student>builder().status("succcess")
+				.message("Student deleted succesfully and associated " + "sujects too").data(student).build();
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<ResponseApi<Student>> deleteOnlyStudent(int studentId) {
+		// TODO Auto-generated method stub
+
+		Optional<Student> optionalStudent = studentDao.findByStudentKeyStudentId(studentId);
+
+		if (optionalStudent.isEmpty() || optionalStudent == null) {
+			throw new IdException("No student found by this id");
+		}
+
+		Student student = optionalStudent.get();
+		List<Subject> subjectList = student.getSubject();
+
+		for (Subject subject : subjectList) {
+
+			subject.setStudent(null);
+
+		}
+
+		subjectDao.saveSubject(subjectList);
+		student.setSubject(null);
+
+		 studentDao.deleteStudent(student);
+
+		ResponseApi<Student> response = ResponseApi.<Student>builder().status("succcess")
+				.message("Only Student deleted successfully").data(student).build();
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 }

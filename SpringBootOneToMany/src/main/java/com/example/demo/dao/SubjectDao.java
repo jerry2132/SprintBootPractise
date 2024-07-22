@@ -13,28 +13,39 @@ import com.example.demo.repo.SubjectRepo;
 
 @Repository
 public class SubjectDao {
-	
+
 	@Autowired
 	private SubjectRepo subjectRepo;
-	
-	
+
 	public List<Subject> saveSubject(List<Subject> subject) {
 		return subjectRepo.saveAll(subject);
 	}
-	
-	public Optional<Subject> findBySubjectId(int id){
+
+	public Optional<Subject> findBySubjectId(int id) {
 		return subjectRepo.findById(id);
 	}
-	
+
 	public Subject saveSingleSubject(Subject subject) {
 		return subjectRepo.save(subject);
 	}
-	
-	public List<Subject> getAllSubjects(int offset,int pageSize){
-		
+
+	public List<Subject> getAllSubjects(int offset, int pageSize) {
+
 		Page<Subject> sub = subjectRepo.findAll(PageRequest.of(offset, pageSize));
-		
 		return sub.getContent();
+	}
+
+	public void deleteSubject(Subject subject) {
+		subjectRepo.delete(subject);
+	}
+	
+	public List<Subject> getAllSubjectsDao(){
+		
+		return subjectRepo.findAll();
+	}
+	
+	public void saveAll(List<Subject> subjectList) {
+		subjectRepo.saveAll(subjectList);
 	}
 
 }

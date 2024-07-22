@@ -17,4 +17,6 @@ public interface SubjectInterface {
 	
 	public ResponseEntity<ResponseApi<List<Subject>>> assocaiteSubjectToPresentStudent(List<Subject> sub);
 	
+	public ResponseEntity<ResponseApi<Subject>> deleteSubjectById(int id);
+	
 }

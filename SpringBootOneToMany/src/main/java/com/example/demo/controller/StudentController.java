@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +39,16 @@ public class StudentController {
 	@GetMapping("/getAllStudents/{offset}/{pageSize}")
 	public ResponseEntity<ResponseApi<List<Student>>> getAllStudents(@PathVariable Integer offset , @PathVariable Integer pageSize){
 		return studentInterface.getAllStudents(offset,pageSize);
+	}
+	
+	@DeleteMapping("/deleteStudentByStudentId/{studentId}")
+	public ResponseEntity<ResponseApi<Student>> deleteStudent(@PathVariable Integer studentId){
+		return studentInterface.deleteStudentByStudentId(studentId);
+	}
+	
+	@DeleteMapping("/deleteOnlyStudent/{studentId}")
+	public ResponseEntity<ResponseApi<Student>> deleteOnlyStudent(@PathVariable Integer studentId){
+		return studentInterface.deleteOnlyStudent(studentId);
 	}
 	
 }

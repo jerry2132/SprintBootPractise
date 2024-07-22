@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,8 +20,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Student {
-	
-	
 	
 	@EmbeddedId
 	private StudentKey id;
@@ -68,10 +67,28 @@ public class Student {
 	public void setSubject(List<Subject> subject) {
 		this.subject = subject;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Student [id=" + id + ", name=" + name + ", email=" + email + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(email, id, name, subject);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Student other = (Student) obj;
+		return Objects.equals(email, other.email) && Objects.equals(id, other.id) && Objects.equals(name, other.name)
+				&& Objects.equals(subject, other.subject);
 	}
 	
 }
