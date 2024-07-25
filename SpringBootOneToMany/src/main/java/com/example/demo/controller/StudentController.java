@@ -17,6 +17,8 @@ import com.example.demo.Response.ResponseApi;
 import com.example.demo.ServiceInterface.StudentInterface;
 import com.example.demo.dto.Student;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class StudentController {
 
@@ -25,7 +27,7 @@ public class StudentController {
 	
 	
 	@PostMapping("/saveStudent")
-	public ResponseEntity<ResponseApi<Student>> saveStudent(@RequestBody Student student){
+	public ResponseEntity<ResponseApi<Student>> saveStudent(@Valid @RequestBody Student student){
 		
 		return studentInterface.saveStudent(student);
 	}

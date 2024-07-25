@@ -42,6 +42,7 @@ public class SubjectDao {
 	public List<Subject> getAllSubjectsDao(){
 		
 		return subjectRepo.findAll();
+	
 	}
 	
 	public void saveAll(List<Subject> subjectList) {

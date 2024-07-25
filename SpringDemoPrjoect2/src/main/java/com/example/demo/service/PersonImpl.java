@@ -230,4 +230,42 @@ public class PersonImpl implements PersonInterface{
 		return new ResponseEntity<ResponseApi<Adhaar>>(response,HttpStatus.NOT_FOUND);
 	}
 
+
+	@Override
+	public ResponseEntity<ResponseApi<Person>> updatePersonAndAdhaarByPersonId(int personId, Person person) {
+		// TODO Auto-generated method stub
+		
+		Optional<Person> optionalPerson  = personDao.findPersonById(personId);
+		
+		if(optionalPerson.isPresent() && optionalPerson != null) {
+			
+			Person person1 = optionalPerson.get();
+			
+			person1.setDob(person.getDob());
+			person1.setName(person.getName());
+//			person1.setAdhaar(null);
+//			System.out.println(person1.getAdhaar());
+//			
+//			person1.setAdhaar(person.getAdhaar());
+//			person1.getAdhaar();
+			
+			person1.getAdhaar().setAddress(person.getAdhaar().getAddress());
+			person1.getAdhaar().setFatherName(person.getAdhaar().getFatherName());
+			
+			personDao.savePerson(person1);
+			
+			ResponseApi<Person> response = ResponseApi.<Person>builder().status("success").message("person and adhaar updated")
+					.data(person1).build();
+			
+			return new ResponseEntity<ResponseApi<Person>>(response,HttpStatus.OK);
+			
+		}
+		
+		
+		ResponseApi<Person> response = ResponseApi.<Person>builder().status("error").message("no peron found by this id")
+				.data(null).build();
+		
+		return new ResponseEntity<ResponseApi<Person>>(response,HttpStatus.BAD_REQUEST);
+	}
+
 }

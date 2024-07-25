@@ -27,10 +27,10 @@ public class StudentDao {
 	}
 	
 	
-	public Optional<Student> findByIdStudent(int id){
-		return studentRepo.findById(id);
-	}
-	
+//	public Optional<Student> findByIdStudent(int id){
+//		return studentRepo.findById(id);
+//	}
+//	
 	
 	public Optional<Student> findByStudentKeyStudentId(int studentId){
 		

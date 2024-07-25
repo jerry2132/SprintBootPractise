@@ -2,13 +2,15 @@ package com.example.demo.dto;
 
 import java.util.Objects;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,13 +23,19 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Subject {
 
+
 	@Id
 	private int id;
 
+	
 	private int subjectId;
 
+	@NotBlank(message = "AUTHOR CAN NOT BE EMPTY OR NULL, GIVE SOME VALUE TO AUTHOR")
+//	@validateAnnotation(message ="can not be empty")
 	private String author;
 
+	@NotEmpty(message="NAME CANNOT BE EMPTY OR NULL")
+//	@validateAnnotation(message ="can not be empty")
 	private String name;
 
 	@ManyToOne

@@ -16,7 +16,7 @@ import com.example.demo.Response.ResponseApi;
 import com.example.demo.ServiceInterface.SubjectInterface;
 import com.example.demo.dto.Subject;
 
-import jakarta.websocket.server.PathParam;
+import jakarta.validation.Valid;
 
 @RestController
 public class SubjectController {
@@ -27,7 +27,7 @@ public class SubjectController {
 	
 	
 	@PostMapping("/saveSubject")
-	public ResponseEntity<ResponseApi<List<Subject>>> saveSubject(@RequestBody List<Subject> sub){
+	public ResponseEntity<ResponseApi<List<Subject>>> saveSubject(@Valid @RequestBody List<Subject> sub){
 		
 		return subjectInterface.saveSubject(sub);
 	}

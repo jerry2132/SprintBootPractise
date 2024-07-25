@@ -3,6 +3,8 @@ package com.example.demo.dto;
 import java.util.Objects;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,8 +13,10 @@ import lombok.Setter;
 @Setter
 public class StudentKey {
 	
+	@NotEmpty
 	private int id;
 	
+	@NotEmpty
 	private int studentId;
 
 	

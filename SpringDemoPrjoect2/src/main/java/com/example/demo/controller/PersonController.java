@@ -81,4 +81,9 @@ public class PersonController {
 		
 	}
 	
+	@PutMapping("/updatePersonAndAdhaar/{personId}")
+	public ResponseEntity<ResponseApi<Person>> updatePerson(@RequestBody Person person,@PathVariable int personId){
+		return personInterface.updatePersonAndAdhaarByPersonId(personId, person);
+	}
+	
 }

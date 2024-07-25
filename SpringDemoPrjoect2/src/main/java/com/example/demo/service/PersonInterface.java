@@ -26,4 +26,5 @@ public interface PersonInterface {
 	
 	public ResponseEntity<ResponseApi<Adhaar>> deleteAdhaarByAdhaarNumber(Long number);
 	
+	public ResponseEntity<ResponseApi<Person>> updatePersonAndAdhaarByPersonId(int personId,Person person);
 }

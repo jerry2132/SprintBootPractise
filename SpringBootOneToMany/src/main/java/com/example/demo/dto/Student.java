@@ -3,17 +3,17 @@ package com.example.demo.dto;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.demo.ValidationAnnotation.EmailHostNameValidation;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -24,8 +24,12 @@ public class Student {
 	@EmbeddedId
 	private StudentKey id;
 	
+	@NotEmpty(message ="name can not be empty")
 	private String name;
 	
+	@NotEmpty(message="email can not be empty")
+	@Email(message="fromat is not valid")
+	@EmailHostNameValidation
 	private String email;
 	
 	@OneToMany(mappedBy = "student",cascade = CascadeType.ALL)

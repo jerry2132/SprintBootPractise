@@ -1,0 +1,12 @@
+package com.example.demo.Repo;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.demo.Entity.Subject;
+import com.example.demo.Entity.SubjectKey;
+
+public interface SubjectRepo extends JpaRepository<Subject, SubjectKey>{
+	
+	
+
+}
