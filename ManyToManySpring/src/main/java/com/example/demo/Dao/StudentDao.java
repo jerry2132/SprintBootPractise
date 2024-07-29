@@ -26,4 +26,9 @@ public class StudentDao {
 		return studentRepo.saveAll(student);
 	}
 	
+	public List<Student> getAll(){
+		
+		return studentRepo.findAll();
+	}
+	
 }

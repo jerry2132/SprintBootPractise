@@ -2,29 +2,33 @@ package com.example.demo.dto;
 
 import java.util.List;
 
-import com.example.demo.Entity.StudentKey;
-import com.example.demo.Entity.Subject;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter@AllArgsConstructor
+@JsonInclude(Include.NON_NULL)
+@AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Data
 public class StudentDto {
 
 	
-	private int studentId;
-	
+	private StudentKeyDto studentKey;
+
+	@NotBlank(message="name can be null or blank")
+	@Size(min = 3, message="name must be greater than 3 characters")
 	private String name;
 
+	@NotBlank(message="email can not  be null or  blank")
+	@Column(unique = true)
 	private String email;
-	
+
 	private List<SubjectDto> subjectDto;
 
 }

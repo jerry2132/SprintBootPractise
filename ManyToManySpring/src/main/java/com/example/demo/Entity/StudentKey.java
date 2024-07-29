@@ -2,25 +2,23 @@ package com.example.demo.Entity;
 
 import java.util.Objects;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Embeddable
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class StudentKey {
 
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
+	
 
 	private int studentId;
 

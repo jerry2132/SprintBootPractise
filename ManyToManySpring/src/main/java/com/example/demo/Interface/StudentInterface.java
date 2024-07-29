@@ -14,4 +14,8 @@ public interface StudentInterface {
 
 	
 	public ResponseEntity<ResponseApi<List<Student>>> saveStudentAndSubject(List<StudentDto> studentDto);
+	
+	public ResponseEntity<ResponseApi<List<StudentDto>>> saveOnlyStudents(List<StudentDto> studentDto);
+	
+	public ResponseEntity<ResponseApi<StudentDto>> saveStudentAndAssociateAllSubjects(StudentDto studentDto);
 }

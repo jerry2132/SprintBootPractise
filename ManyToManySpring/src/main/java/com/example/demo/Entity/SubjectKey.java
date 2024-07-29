@@ -3,32 +3,28 @@ package com.example.demo.Entity;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Embeddable
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class SubjectKey implements Serializable{
+@Data
+public class SubjectKey {
 
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	
+
 	private int subjectId;
 
-	
-
-	
-	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, subjectId);
@@ -46,8 +42,4 @@ public class SubjectKey implements Serializable{
 		return id == other.id && subjectId == other.subjectId;
 	}
 
-
-	
-	
-	
 }
