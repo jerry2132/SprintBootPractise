@@ -7,12 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Entity.Student;
 import com.example.demo.Interface.StudentInterface;
 import com.example.demo.ResponseApi.ResponseApi;
 import com.example.demo.dto.StudentDto;
+import com.example.demo.dto.SubjectDto;
+import com.example.demo.dto.SubjectDto;
 
 import jakarta.validation.Valid;
 
@@ -46,6 +49,14 @@ public class StudentController {
 		
 		return studentInterface.saveStudentAndAssociateAllSubjects(studentDto);
 
+	}
+	
+	
+	@PostMapping("/associateAlreadyPresentSubjectToStudent")
+	public ResponseEntity<ResponseApi<StudentDto>> associateStudentWithAlredyPersentSubject(@RequestParam("studentId") int studentId,
+			@RequestBody List<SubjectDto> subjectDto){
+		
+		return studentInterface.associateStudentWithAlreadyPresentSubject(studentId,subjectDto);
 	}
 
 }

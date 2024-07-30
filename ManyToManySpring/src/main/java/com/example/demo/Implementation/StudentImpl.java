@@ -2,6 +2,8 @@ package com.example.demo.Implementation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import com.example.demo.Entity.Subject;
 import com.example.demo.Interface.StudentInterface;
 import com.example.demo.ResponseApi.ResponseApi;
 import com.example.demo.dto.StudentDto;
+import com.example.demo.dto.SubjectDto;
 
 import jakarta.transaction.Transactional;
 
@@ -97,14 +100,96 @@ public class StudentImpl implements StudentInterface {
 		List<Subject> subjectList = subjectDao.getAll();
 
 		student.setSubject(subjectList);
-		
+
 		studentDao.saveStudent(student);
-		
-		StudentDto  studentDto2  = modelMapper.map(student, StudentDto.class);
+
+		StudentDto studentDto2 = modelMapper.map(student, StudentDto.class);
 
 		ResponseApi<StudentDto> response = ResponseApi.<StudentDto>builder().status("success")
 				.message("saved successfully").data(studentDto2).build();
 		return new ResponseEntity<ResponseApi<StudentDto>>(response, HttpStatus.OK);
+	}
+
+	@Transactional
+	@Override
+	public ResponseEntity<ResponseApi<StudentDto>> associateStudentWithAlreadyPresentSubject(int studentId,
+			List<SubjectDto> subjectDto) {
+		// TODO Auto-generated method stub
+
+		Optional<Student> studentOptional = studentDao.findByStudentId(studentId);
+
+		if (studentOptional == null || studentOptional.isEmpty()) {
+
+			ResponseApi<StudentDto> response = ResponseApi.<StudentDto>builder().status("error")
+					.message("studentId is not found").data(null).build();
+			return new ResponseEntity<ResponseApi<StudentDto>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		List<Subject> alreadyAssociated = new ArrayList<>();
+		List<Subject> valid = new ArrayList<>();
+		List<SubjectDto> notFound = new ArrayList<>();
+		
+		Student student = studentOptional.get();
+		
+		List<Subject> subjectList = student.getSubject();
+
+		for (SubjectDto subjectDto2 : subjectDto) {
+
+			Optional<Subject> subjectOptional = subjectDao.findBySubjectId(subjectDto2.getSubjectKey().getSubjectId());
+			if (subjectOptional == null || subjectOptional.isEmpty()) {
+				notFound.add(subjectDto2);
+				continue;
+			}
+
+			Subject subject = subjectOptional.get();
+			if (subjectList.contains(subject)) {
+				alreadyAssociated.add(subject);
+				continue;
+			}
+
+			valid.add(subject);
+		}
+
+		if (!valid.isEmpty()) {
+
+			subjectList.addAll(valid);
+			student.setSubject(subjectList);
+		}
+
+//		String alreadyPresent = alreadyAssocaited.isEmpty() ? ""
+//				: "Following subjectId is already associated to some other student " + alreadyAssocaited.stream()
+//						.map(subject -> subject.getId() + " ").collect(Collectors.joining(" , "));
+
+		StudentDto studentDto = modelMapper.map(student, StudentDto.class);
+
+		String validMessage = (valid.isEmpty()) ? ""
+				: "following subejcts are assocaited successfully"
+						+ valid.stream().map(subject -> subject.getSubjectKey().getSubjectId() + " ")
+								.collect(Collectors.joining(" , "));
+
+		String alreadyAssoication = (alreadyAssociated.isEmpty() ? ""
+				: "following subjects are already associated " + alreadyAssociated.stream()
+						.map(subject -> subject.getSubjectKey().getSubjectId() + " ").collect(Collectors.joining(" , ")));
+
+		String notFoundMessage = (notFound.isEmpty() ? ""
+				: "following subjects are not present in db  " + notFound.stream()
+						.map(subject -> subject.getSubjectKey().getSubjectId() + " ").collect(Collectors.joining(" , ")));
+
+		String finalMessage = (validMessage.isEmpty() ? "" : validMessage)
+				+ (alreadyAssoication.isEmpty() ? "" : " | " + alreadyAssoication)
+				+ (notFoundMessage.isEmpty() ? "" : " | " + notFoundMessage);
+
+		if (!valid.isEmpty()) {
+
+			ResponseApi<StudentDto> response = ResponseApi.<StudentDto>builder().status("success").message(finalMessage)
+					.data(studentDto).build();
+			return new ResponseEntity<ResponseApi<StudentDto>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		ResponseApi<StudentDto> response = ResponseApi.<StudentDto>builder().status("error").message(finalMessage)
+				.data(null).build();
+		return new ResponseEntity<ResponseApi<StudentDto>>(response, HttpStatus.NOT_FOUND);
+
 	}
 
 //	public Student saveStudent(StudentDto studentDto) {

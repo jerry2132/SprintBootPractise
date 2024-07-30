@@ -1,6 +1,7 @@
 package com.example.demo.Dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,11 @@ public class SubjectDao {
 	public List<Subject> getAll(){
 		
 		return subjectRepo.findAll();
+	}
+	
+	public Optional<Subject> findBySubjectId(int subejctId) {
+		
+		return subjectRepo.findBySubjectKey_SubjectId(subejctId);
 	}
 	
 }

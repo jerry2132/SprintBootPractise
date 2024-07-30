@@ -12,9 +12,12 @@ import com.example.demo.dto.SubjectDto;
 @Service
 public interface SubjectInterface {
 
-	
 	public ResponseEntity<ResponseApi<List<SubjectDto>>> saveMultipleSubjectsOnly(List<SubjectDto> subjectDto);
-	
+
 	public ResponseEntity<ResponseApi<List<StudentDto>>> assocaiteASubjectToAllStudents(SubjectDto subjectDto);
-	
+
+	public ResponseEntity<ResponseApi<SubjectDto>> updatePriceBySubjectId(int subjectId, double price);
+
+	public ResponseEntity<ResponseApi<List<StudentDto>>> associateSingleSubjectToMultipleStudents(int subjectId,
+			List<StudentDto> studentDto);
 }

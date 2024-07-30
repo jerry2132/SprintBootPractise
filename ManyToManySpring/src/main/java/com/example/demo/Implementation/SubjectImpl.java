@@ -3,6 +3,8 @@ package com.example.demo.Implementation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -82,17 +84,16 @@ public class SubjectImpl implements SubjectInterface {
 		List<Student> studentList = studentDao.getAll();
 		System.out.println(studentList);
 
-
 		for (Student student : studentList) {
-			
+
 			List<Subject> subjectList = student.getSubject();
 
-			System.out.println("before  "+subjectList);
-			
+			System.out.println("before  " + subjectList);
+
 			subjectList.add(subject);
-			
-			System.out.println("after  "+subjectList);
-			
+
+			System.out.println("after  " + subjectList);
+
 			student.setSubject(subjectList);
 
 		}
@@ -108,8 +109,126 @@ public class SubjectImpl implements SubjectInterface {
 				.message("subjects saved successfully ").data(studentDtoList).build();
 		return new ResponseEntity<ResponseApi<List<StudentDto>>>(response, HttpStatus.OK);
 	}
-	
-	
-	
+
+	@Transactional
+	@Override
+	public ResponseEntity<ResponseApi<SubjectDto>> updatePriceBySubjectId(int subjectId, double price) {
+		// TODO Auto-generated method stub
+
+		Optional<Subject> subjectOptional = subjectDao.findBySubjectId(subjectId);
+
+		if (subjectOptional == null || subjectOptional.isEmpty()) {
+
+			ResponseApi<SubjectDto> response = ResponseApi.<SubjectDto>builder().status("error")
+					.message("cann not save ").data(null).build();
+			return new ResponseEntity<ResponseApi<SubjectDto>>(response, HttpStatus.NOT_ACCEPTABLE);
+
+		}
+
+		Subject subject = subjectOptional.get();
+
+		subject.setPrice(price);
+
+		SubjectDto subjectDto = modelMapper.map(subject, SubjectDto.class);
+		ResponseApi<SubjectDto> response = ResponseApi.<SubjectDto>builder().status("success")
+				.message("subject updated successfully").data(subjectDto).build();
+		return new ResponseEntity<ResponseApi<SubjectDto>>(response, HttpStatus.OK);
+	}
+
+	@Transactional
+	@Override
+	public ResponseEntity<ResponseApi<List<StudentDto>>> associateSingleSubjectToMultipleStudents(int subjectId,
+			List<StudentDto> studentDto) {
+		// TODO Auto-generated method stub
+
+		Optional<Subject> subjectOptional = subjectDao.findBySubjectId(subjectId);
+
+		if (subjectOptional == null || subjectOptional.isEmpty()) {
+
+			ResponseApi<List<StudentDto>> response = ResponseApi.<List<StudentDto>>builder().status("error")
+					.message("no data found" + "by this subjectId ").data(null).build();
+
+			return new ResponseEntity<ResponseApi<List<StudentDto>>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		List<StudentDto> notFound = new ArrayList<>();
+		List<Student> valid = new ArrayList<>();
+		List<Student> alreadyAssociated = new ArrayList<>();
+		Subject subject = subjectOptional.get();
+		for (StudentDto studentDto2 : studentDto) {
+
+			Optional<Student> studentOptional = studentDao.findByStudentId(studentDto2.getStudentKey().getStudentId());
+
+			if (studentOptional.isEmpty() || studentOptional == null) {
+				notFound.add(studentDto2);
+				continue;
+			}
+
+			Student student = studentOptional.get();
+
+//			List<Subject> subjectList = student.getSubject();
+
+			if (student.getSubject().contains(subject)) {
+				alreadyAssociated.add(student);
+			} else {
+
+				student.getSubject().add(subject);
+				valid.add(student);
+			}
+
+		}
+
+		if (!valid.isEmpty()) {
+
+//			List<Student> studentList = subject.getStudent();
+//			System.out.println(studentList);
+//			studentList.addAll(valid);
+//			subject.setStudent(studentList);
+//			System.out.println(subject);
+//			subjectDao.saveSubject(subject);
+
+//			subject.getStudent().addAll(valid);
+//
+//			subjectDao.saveSubject(subject);
+			
+			for (Student student : valid) {
+				
+				studentDao.saveStudent(student);
+			}
+		}
+
+		Type listType = new TypeToken<List<StudentDto>>() {
+		}.getType();
+
+		List<StudentDto> studentDtoList = modelMapper.map(valid, listType);
+
+		String notfoundMessage = (notFound.isEmpty() ? "" : "these students are not found in the db")
+				+ notFound.stream().map(e -> e.getStudentKey().getStudentId() + " ").collect(Collectors.joining(" , "));
+
+		String validMessage = (valid.isEmpty() ? "" : "these students are successfully associated in the database")
+				+ valid.stream().map(e -> e.getStudentKey().getStudentId() + " ").collect(Collectors.joining(" , "));
+
+		String alreadyMessage = (alreadyAssociated.isEmpty() ? "" : "these students are already associated")
+				+ alreadyAssociated.stream().map(e -> e.getStudentKey().getStudentId() + " ")
+						.collect(Collectors.joining(" , "));
+
+		String finalMessage = (notfoundMessage.isEmpty() ? "" : " | " + notfoundMessage)
+				+ (validMessage.isEmpty() ? "" : " | " + validMessage)
+				+ (alreadyMessage.isEmpty() ? " " : " | " + alreadyMessage);
+
+		if (!valid.isEmpty() && valid != null) {
+
+			ResponseApi<List<StudentDto>> response = ResponseApi.<List<StudentDto>>builder().status("success")
+					.message(finalMessage).data(studentDtoList).build();
+
+			return new ResponseEntity<ResponseApi<List<StudentDto>>>(response, HttpStatus.OK);
+		}
+
+		ResponseApi<List<StudentDto>> response = ResponseApi.<List<StudentDto>>builder().status("error")
+				.message(finalMessage).data(null).build();
+
+		return new ResponseEntity<ResponseApi<List<StudentDto>>>(response, HttpStatus.NOT_ACCEPTABLE);
+
+	}
 
 }

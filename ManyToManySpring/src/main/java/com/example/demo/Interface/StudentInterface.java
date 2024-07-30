@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.Entity.Student;
 import com.example.demo.ResponseApi.ResponseApi;
 import com.example.demo.dto.StudentDto;
+import com.example.demo.dto.SubjectDto;
 
 @Service
 public interface StudentInterface {
@@ -18,4 +19,6 @@ public interface StudentInterface {
 	public ResponseEntity<ResponseApi<List<StudentDto>>> saveOnlyStudents(List<StudentDto> studentDto);
 	
 	public ResponseEntity<ResponseApi<StudentDto>> saveStudentAndAssociateAllSubjects(StudentDto studentDto);
+	
+	public ResponseEntity<ResponseApi<StudentDto>> associateStudentWithAlreadyPresentSubject(int studentId, List<SubjectDto> subjectDto);
 }
