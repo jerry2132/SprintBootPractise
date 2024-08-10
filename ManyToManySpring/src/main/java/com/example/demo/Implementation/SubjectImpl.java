@@ -190,9 +190,9 @@ public class SubjectImpl implements SubjectInterface {
 //			subject.getStudent().addAll(valid);
 //
 //			subjectDao.saveSubject(subject);
-			
+
 			for (Student student : valid) {
-				
+
 				studentDao.saveStudent(student);
 			}
 		}

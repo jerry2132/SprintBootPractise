@@ -2,6 +2,8 @@
 <section name="Workbench">
 	<section name="MavenProjectWizardLocationPage">
 		<list key="location">
+			<item value="E:\sts\Spring-mvc\src\main"/>
+			<item value="E:\sts\ManyToManySpring"/>
 			<item value="E:\sts\springCoreSimpleXMLProject\src\main\java\mySpring.xml"/>
 		</list>
 		<list key="projectNameTemplate">
@@ -26,15 +28,13 @@
 	</section>
 	<section name="Maven2ProjectWizardArchifactPage">
 		<list key="package">
-			<item value="com.sts.project.springCoreSimpleAnnotationProject"/>
-			<item value="com.sts.project.springCoreSimpleXMLProject"/>
+			<item value="com.example.spring_mvc_project"/>
 		</list>
 		<list key="groupId">
-			<item value="com.sts.project"/>
+			<item value="com.example"/>
 		</list>
 		<list key="artifactId">
-			<item value="springCoreSimpleAnnotationProject"/>
-			<item value="springCoreSimpleXMLProject"/>
+			<item value="spring-mvc-project"/>
 		</list>
 		<list key="projectNameTemplate">
 			<item value="[artifactId]"/>
@@ -70,5 +70,18 @@
 	<section name="org.eclipse.m2e.core.pom.overview">
 	</section>
 	<section name="org.eclipse.m2e.core.pom.dependencies">
+	</section>
+	<section name="MavenProjectImportWizardPage">
+		<list key="rootDirectory">
+			<item value="E:\sts\ManyToManySpring"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
 	</section>
 </section>
