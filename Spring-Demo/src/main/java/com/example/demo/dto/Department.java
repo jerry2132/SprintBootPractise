@@ -27,4 +27,7 @@ public class Department {
 	
 	@OneToMany
 	private List<Manager> manager;
+	
+	@OneToMany
+	private List<Employee> employee;
 }

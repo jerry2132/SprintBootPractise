@@ -43,13 +43,14 @@ public class SecurityConfig {
 				req -> req.requestMatchers("/user/**").hasAnyRole("USER","ADMIN").requestMatchers("/admin/**")
 						.hasRole("ADMIN").
 						requestMatchers("/manager/**").hasRole("MANAGER").
-						requestMatchers("/employee/**").hasRole("EMPLOYEE").
 						requestMatchers("/ceo/**").hasRole("CEO").
 						requestMatchers("/public/**").permitAll().anyRequest().authenticated());
 
 //		http.formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
+//		http.formLogin(formlogin -> formlogin.successHandler(successHandler));
 		http.formLogin(Customizer.withDefaults());
 		http.httpBasic(Customizer.withDefaults());//for postman api
+
 	
 
 //        http

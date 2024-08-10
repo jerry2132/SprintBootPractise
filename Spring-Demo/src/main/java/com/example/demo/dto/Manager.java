@@ -4,7 +4,7 @@ import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -26,6 +26,8 @@ public class Manager {
 	private String firstName;
 
 	private String lastName;
+	
+	private String userName;
 
 	private String email;
 
@@ -33,7 +35,7 @@ public class Manager {
 
 	private long phoneNumber;
 
-	@OneToOne
+	@ManyToMany
 	private List<Role> role;
 
 	@OneToMany

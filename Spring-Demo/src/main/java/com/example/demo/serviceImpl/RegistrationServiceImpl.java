@@ -34,7 +34,7 @@ public class RegistrationServiceImpl implements RegistrationService{
 			return new ResponseEntity<>(response,HttpStatus.ALREADY_REPORTED);
 		}
 		
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+//		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User newUser = userDao.saveUser(user);
 		
 		Response<User> response = Response.<User>builder().status("success").message("user saved").data(newUser).build();

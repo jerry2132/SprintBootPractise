@@ -1,0 +1,16 @@
+package com.example.demo.service;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.Manager;
+import com.example.demo.response.Response;
+
+@Service
+public interface ManagerService {
+
+	public ResponseEntity<Response<Manager>> saveManager(Manager manager);
+	
+	public ResponseEntity<Response<Manager>> getDetails(int managerId);
+	
+}
