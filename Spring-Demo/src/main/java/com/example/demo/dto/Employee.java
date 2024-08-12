@@ -24,7 +24,7 @@ public class Employee {
 	
 	private String firstName;
 	
-	private String lasstName;
+	private String lastName;
 	
 	private String userName;
 	

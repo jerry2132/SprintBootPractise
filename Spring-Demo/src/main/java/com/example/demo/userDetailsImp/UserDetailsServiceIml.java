@@ -29,7 +29,7 @@ public class UserDetailsServiceIml implements UserDetailsService {
 
 			User user = optionalUser.get();
 			
-			System.out.println(user);
+//			System.out.println(user);
 			
 			CustomUserDetails customUserDetails = new CustomUserDetails(user);
 			return customUserDetails;

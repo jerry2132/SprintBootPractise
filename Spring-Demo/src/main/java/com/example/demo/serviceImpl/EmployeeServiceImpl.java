@@ -32,7 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public ResponseEntity<Response<Employee>> saveEmployee(Employee employee) {
 		// TODO Auto-generated method stub
 
-		employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+		
 
 		User user = extractUser(employee);
 //		ResponseEntity<Response<User>> usernw = registrationService.registerUser(user);
@@ -59,6 +59,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 			return new ResponseEntity<Response<Employee>>(response, HttpStatus.ALREADY_REPORTED);
 
 		}
+		
+		employee.setPassword(passwordEncoder.encode(employee.getPassword()));
 
 		employeeDao.saveEmployee(employee);
 

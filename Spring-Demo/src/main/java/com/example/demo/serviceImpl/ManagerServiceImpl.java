@@ -1,10 +1,12 @@
 package com.example.demo.serviceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import com.example.demo.dao.ManagerDao;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.User;
 import com.example.demo.exception.IdException;
+import com.example.demo.exception.NotAuthorized;
 import com.example.demo.response.Response;
 import com.example.demo.service.ManagerService;
 import com.example.demo.service.RegistrationService;
@@ -32,7 +35,6 @@ public class ManagerServiceImpl implements ManagerService {
 	public ResponseEntity<Response<Manager>> saveManager(Manager manager) {
 		// TODO Auto-generated method stub
 
-		manager.setPassword(passwordEncoder.encode(manager.getPassword()));
 		User user = extractUser(manager);
 		if (registrationService.registerUser(user).getStatusCode().isSameCodeAs(HttpStatus.ALREADY_REPORTED)) {
 
@@ -41,6 +43,8 @@ public class ManagerServiceImpl implements ManagerService {
 
 			return new ResponseEntity<>(response, HttpStatus.ALREADY_REPORTED);
 		}
+
+		manager.setPassword(passwordEncoder.encode(manager.getPassword()));
 
 		Manager man = managerDao.saveManager(manager);
 
@@ -57,24 +61,47 @@ public class ManagerServiceImpl implements ManagerService {
 		return user;
 	}
 
-	
-	
 	@Override
 	public ResponseEntity<Response<Manager>> getDetails(int managerId) {
 		// TODO Auto-generated method stub
-		
-	Optional<Manager> optionalManager = 	managerDao.findById(managerId);
-	
-	if(optionalManager == null || optionalManager.isEmpty()) {
-		throw new IdException("id not present in the database");
+
+		Optional<Manager> optionalManager = managerDao.findById(managerId);
+
+		if (optionalManager == null || optionalManager.isEmpty()) {
+			throw new IdException("id not present in the database");
+		}
+
+//		if (!optionalManager.get().getUserName().equals(req.getUserPrincipal().getName())) {
+//
+//			throw new NotAuthorized("you are not authorized to access this url");
+//
+//		}
+
+		if (!optionalManager.get().getUserName()
+				.equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
+			throw new NotAuthorized("you are not authorized to access this url");
+		}
+
+		Manager manager = optionalManager.get();
+
+		Response<Manager> response = Response.<Manager>builder().status("success").message("manager deatails")
+				.data(manager).build();
+
+		return new ResponseEntity<Response<Manager>>(response, HttpStatus.OK);
 	}
+
+	@Override
+	public ResponseEntity<Response<List<Manager>>> getAllManagers(int pageNumber, int pageSize) {
+		// TODO Auto-generated method stub
 		
-	Manager manager  = optionalManager.get();
-	
-	Response<Manager> response = Response.<Manager>builder().status("success").message("manager deatails")
-			.data(manager).build();
-	
-		return new ResponseEntity<Response<Manager>>(response,HttpStatus.OK);
+		System.out.println(pageNumber+"  "+pageSize);
+		
+		List<Manager> managerList = managerDao.getAllManagers(pageNumber,pageSize);
+
+		Response<List<Manager>> response = Response.<List<Manager>>builder().status("success")
+				.message("manager deatails").data(managerList).build();
+
+		return new ResponseEntity<Response<List<Manager>>>(response, HttpStatus.OK);
 	}
 
 }

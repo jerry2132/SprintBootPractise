@@ -1,8 +1,10 @@
 package com.example.demo.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.dto.Manager;
@@ -22,4 +24,7 @@ public class ManagerDao {
 		return managerRepo.findById(id);
 	}
 	
+	public List<Manager> getAllManagers(int pageNumber,int pageSize){
+		return managerRepo.findAll(PageRequest.of(pageNumber, pageSize)).toList();
+	}
 }

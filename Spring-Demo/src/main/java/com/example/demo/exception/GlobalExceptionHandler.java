@@ -20,4 +20,13 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<Response<Manager>>(response, HttpStatus.NOT_FOUND);
 	}
 	
+	@ExceptionHandler(NotAuthorized.class)
+	public ResponseEntity<Response<String>> handleNotAuthorizedException(NotAuthorized e){
+		
+		Response<String> response = Response.<String>builder().status("error").message(e.getMessage())
+				.data(null).build();
+		return new ResponseEntity<Response<String>>(response, HttpStatus.NOT_FOUND);
+		
+	}
+	
 }

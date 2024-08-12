@@ -32,7 +32,7 @@ public class CustomUserDetails implements UserDetails{
 			authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 		}
 		
-		System.out.println(authorities);
+//		System.out.println(authorities);
 				return authorities;
 	}
 
