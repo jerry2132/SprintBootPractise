@@ -27,4 +27,8 @@ public class DepartmentDao {
 	public List<Department> getAllDepartment(int pageNumber,int pageSize){
 		return departmentRepo.findAll(PageRequest.of(pageNumber, pageSize)).toList();
 	}
+	
+	public List<Department> getAllDepartment(){
+		return departmentRepo.findAll();
+	}
 }

@@ -15,4 +15,5 @@ public interface EmployeeService {
 	
 	public ResponseEntity<Response<List<Employee>>> getAllemployee(int pageNumber, int size);
 
+	public ResponseEntity<Response<Employee>> deleteemployee(int empId);
 }

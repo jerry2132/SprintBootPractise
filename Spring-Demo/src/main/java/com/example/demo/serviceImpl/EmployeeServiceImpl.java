@@ -1,6 +1,7 @@
 package com.example.demo.serviceImpl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,9 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.EmployeeDao;
-import com.example.demo.dao.UserDao;
 import com.example.demo.dto.Employee;
-import com.example.demo.dto.Manager;
 import com.example.demo.dto.User;
 import com.example.demo.response.Response;
 import com.example.demo.service.EmployeeService;
@@ -90,6 +89,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		return new ResponseEntity<Response<List<Employee>>>(response, HttpStatus.OK);
 	
+	}
+
+	@Override
+	public ResponseEntity<Response<Employee>> deleteemployee(int empId) {
+		// TODO Auto-generated method stub
+		
+		Optional<Employee> optionalEmployee = employeeDao.findEmployee(empId);
+		
+		if(optionalEmployee.isEmpty() || optionalEmployee == null) {
+			Response<Employee> response = Response.<Employee>builder().status("error")
+					.message("employeee not found").data(null).build();
+
+			return new ResponseEntity<Response<Employee>>(response, HttpStatus.NOT_FOUND);
+		}
+		
+		employeeDao.deleteEmployee(optionalEmployee.get());
+		
+		Response<Employee> response = Response.<Employee>builder().status("success")
+				.message("employeee deleted").data(optionalEmployee.get()).build();
+
+		return new ResponseEntity<Response<Employee>>(response, HttpStatus.OK);
 	}
 
 }

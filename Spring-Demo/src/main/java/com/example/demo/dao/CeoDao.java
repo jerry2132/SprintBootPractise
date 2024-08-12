@@ -1,5 +1,7 @@
 package com.example.demo.dao;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,10 @@ public class CeoDao {
 	
 	public Ceo saveCeo(Ceo ceo) {
 		return ceoRepo.save(ceo);
+	}
+	
+	public Optional<Ceo> findByCeo(int ceoId){
+		return ceoRepo.findById(ceoId);
 	}
 	
 }

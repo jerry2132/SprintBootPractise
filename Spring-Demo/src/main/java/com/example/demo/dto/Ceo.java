@@ -4,6 +4,7 @@ import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,4 +31,7 @@ public class Ceo {
 	
 	@OneToMany
 	private List<Department> department;
+	
+	@ManyToMany
+	private List<Role> role;
 }
