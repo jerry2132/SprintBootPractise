@@ -1,5 +1,6 @@
 package com.example.demo.serviceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,18 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 		return new ResponseEntity<Response<Department>>(response, HttpStatus.OK);
 
+	}
+
+	@Override
+	public ResponseEntity<Response<List<Department>>> getAllDepartment(int pageNumber, int pageSize) {
+		// TODO Auto-generated method stub
+		
+		List<Department> departmentList = deptDao.getAllDepartment(pageNumber, pageSize);
+		
+		Response<List<Department>> response = Response.<List<Department>>builder().status("success").message("saved successfully")
+				.data(departmentList).build();
+
+		return new ResponseEntity<Response<List<Department>>>(response, HttpStatus.OK);
 	}
 
 }

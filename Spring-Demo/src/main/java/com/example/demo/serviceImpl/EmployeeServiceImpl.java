@@ -1,5 +1,7 @@
 package com.example.demo.serviceImpl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -75,6 +77,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 		User user = new User(employee.getEmployeeId(), employee.getUserName(), employee.getEmail(),
 				employee.getPassword(), employee.getRole());
 		return user;
+	}
+
+	@Override
+	public ResponseEntity<Response<List<Employee>>> getAllemployee(int pageNumber, int size) {
+		// TODO Auto-generated method stub
+		
+		List<Employee> employeeList = employeeDao.getAllEmployee(pageNumber, size);
+		
+		Response<List<Employee>> response = Response.<List<Employee>>builder().status("success")
+				.message("employeee saved suucessfully").data(employeeList).build();
+
+		return new ResponseEntity<Response<List<Employee>>>(response, HttpStatus.OK);
+	
 	}
 
 }

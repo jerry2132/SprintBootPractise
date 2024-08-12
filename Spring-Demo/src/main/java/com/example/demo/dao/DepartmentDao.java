@@ -1,8 +1,10 @@
 package com.example.demo.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.dto.Department;
@@ -20,5 +22,9 @@ public class DepartmentDao {
 	
 	public Optional<Department> findByDeptId(int id){
 		return departmentRepo.findById(id);
+	}
+	
+	public List<Department> getAllDepartment(int pageNumber,int pageSize){
+		return departmentRepo.findAll(PageRequest.of(pageNumber, pageSize)).toList();
 	}
 }

@@ -1,6 +1,9 @@
 package com.example.demo.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.dto.Employee;
@@ -14,5 +17,9 @@ public class EmployeeDao {
 	
 	public Employee saveEmployee(Employee emp) {
 		return employeeRepo.save(emp);
+	}
+	
+	public List<Employee> getAllEmployee(int pageNumber,int size){
+		return employeeRepo.findAll(PageRequest.of(pageNumber, size)).toList();
 	}
 }

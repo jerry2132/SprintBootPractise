@@ -58,4 +58,19 @@ public class AdminController {
 		return managerService.getAllManagers(page,size);
 	}
 
+	@GetMapping("/getAllEmployee")
+	public ResponseEntity<Response<List<Employee>>> getAllEmployee(@RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "5") int size){
+		
+		return employeeService.getAllemployee(page, size);
+		
+	}
+	
+	@GetMapping("/getAllDepartments")
+	public ResponseEntity<Response<List<Department>>> getAllDepartment(@RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "5") int size){
+		
+		return deptService.getAllDepartment(page, size);
+	}
+	
 }
