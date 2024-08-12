@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.ManagerDao;
+import com.example.demo.dao.ProjectDao;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.User;
 import com.example.demo.exception.IdException;
@@ -24,6 +25,9 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private ManagerDao managerDao;
+
+	@Autowired
+	private ProjectDao projectDao;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -93,15 +97,51 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public ResponseEntity<Response<List<Manager>>> getAllManagers(int pageNumber, int pageSize) {
 		// TODO Auto-generated method stub
-		
-		System.out.println(pageNumber+"  "+pageSize);
-		
-		List<Manager> managerList = managerDao.getAllManagers(pageNumber,pageSize);
+
+		System.out.println(pageNumber + "  " + pageSize);
+
+		List<Manager> managerList = managerDao.getAllManagers(pageNumber, pageSize);
 
 		Response<List<Manager>> response = Response.<List<Manager>>builder().status("success")
 				.message("manager deatails").data(managerList).build();
 
 		return new ResponseEntity<Response<List<Manager>>>(response, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Response<Manager>> assignManagerAProject(int projectId, int managerId) {
+		// TODO Auto-generated method stub
+
+		if (managerDao.findById(managerId).isEmpty()) {
+			throw new IdException("this manager id " + managerId + " is not present");
+		}
+
+		if (projectDao.findProject(projectId).isEmpty())
+			throw new IdException("project id " + projectId + " is not present ");
+
+		if (managerDao.findById(managerId).get().getProject() != null) {
+			Response<Manager> response = Response.<Manager>builder().status("error")
+					.message("the manager " + managerId + " is " + "already associated to a project ").data(null)
+					.build();
+			return new ResponseEntity<Response<Manager>>(response, HttpStatus.ALREADY_REPORTED);
+		}
+
+		Optional<Manager> manager = managerDao.findById(managerId).map(man -> {man.setProject(projectDao.findProject(projectId).get());
+		
+		return managerDao.saveManager(man);
+		});
+		
+		System.out.println(manager.get());
+		
+//		
+//		Manager man = managerDao.findById(managerId).get();
+//		man.setProject(projectDao.findProject(projectId).get());
+//
+//		Manager manager = managerDao.saveManager(man);
+
+		Response<Manager> response = Response.<Manager>builder().status("success").message("successfullyy associated")
+				.data(manager.get()).build();
+		return new ResponseEntity<Response<Manager>>(response, HttpStatus.OK);
 	}
 
 }

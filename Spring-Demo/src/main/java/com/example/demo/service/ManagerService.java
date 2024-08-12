@@ -17,4 +17,6 @@ public interface ManagerService {
 	
 	public ResponseEntity<Response<List<Manager>>> getAllManagers(int pageNumber,int pageSize);
 	
+	public ResponseEntity<Response<Manager>> assignManagerAProject(int projectId,int managerId);
+	
 }

@@ -1,8 +1,9 @@
 package com.example.demo.serviceImpl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,9 +11,13 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dao.CeoDao;
 import com.example.demo.dao.DepartmentDao;
 import com.example.demo.dto.Ceo;
+import com.example.demo.dto.Manager;
+import com.example.demo.dto.Project;
 import com.example.demo.dto.User;
 import com.example.demo.response.Response;
 import com.example.demo.service.CeoService;
+import com.example.demo.service.ManagerService;
+import com.example.demo.service.ProjectService;
 import com.example.demo.service.RegistrationService;
 
 @Service
@@ -26,6 +31,12 @@ public class CeoServiceImpl implements CeoService {
 
 	@Autowired
 	private DepartmentDao deptDao;
+	
+	@Autowired
+	private ManagerService managerService;
+	
+	@Autowired
+	private ProjectService projectService;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -65,6 +76,17 @@ public class CeoServiceImpl implements CeoService {
 
 		User user = new User(ceo.getCeoId(), ceo.getUserName(), ceo.getEmail(), ceo.getPassword(), ceo.getRole());
 		return user;
+	}
+
+	@Override
+	public ResponseEntity<Response<List<Project>>> addProject(List<Project> project) {
+		return projectService.addProject(project);
+	}
+
+	@Override
+	public ResponseEntity<Response<Manager>> assignManagerProject(int projectId, int managerId) {
+		// TODO Auto-generated method stub
+		return managerService.assignManagerAProject(projectId, managerId);
 	}
 
 }
