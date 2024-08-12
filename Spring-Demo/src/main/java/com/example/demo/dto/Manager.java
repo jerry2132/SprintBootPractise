@@ -2,6 +2,8 @@ package com.example.demo.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -42,6 +44,7 @@ public class Manager {
 	private List<Employee> employee;
 	
 	@OneToOne
+	@JsonManagedReference
 	private Project project;
 
 }

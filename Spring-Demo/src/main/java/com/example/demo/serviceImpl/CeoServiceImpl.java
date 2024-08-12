@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dao.CeoDao;
 import com.example.demo.dao.DepartmentDao;
 import com.example.demo.dto.Ceo;
+import com.example.demo.dto.Department;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
 import com.example.demo.dto.User;
 import com.example.demo.response.Response;
 import com.example.demo.service.CeoService;
+import com.example.demo.service.DepartmentService;
 import com.example.demo.service.ManagerService;
 import com.example.demo.service.ProjectService;
 import com.example.demo.service.RegistrationService;
@@ -38,6 +40,9 @@ public class CeoServiceImpl implements CeoService {
 	@Autowired
 	private ProjectService projectService;
 
+	@Autowired
+	private DepartmentService deptService;
+	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -87,6 +92,12 @@ public class CeoServiceImpl implements CeoService {
 	public ResponseEntity<Response<Manager>> assignManagerProject(int projectId, int managerId) {
 		// TODO Auto-generated method stub
 		return managerService.assignManagerAProject(projectId, managerId);
+	}
+
+	@Override
+	public ResponseEntity<Response<Department>> associateDepartmentWithManager(int deptId, int managerId) {
+		// TODO Auto-generated method stub
+		return deptService.associateDepartmentWithManager(deptId, managerId);
 	}
 
 }

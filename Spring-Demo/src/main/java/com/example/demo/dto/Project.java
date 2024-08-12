@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import org.hibernate.annotations.CurrentTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,6 +35,7 @@ public class Project {
 	private ProjectStatus status;
 	
 	@OneToOne(mappedBy = "project")
+	@JsonBackReference
 	private  Manager manager;
 	
 }

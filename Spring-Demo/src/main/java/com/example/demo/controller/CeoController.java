@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.Department;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
 import com.example.demo.response.Response;
 import com.example.demo.service.CeoService;
-import com.example.demo.service.ProjectService;
 
 @RestController
 @RequestMapping("/ceo")
@@ -40,5 +40,11 @@ public class CeoController {
 		return ceoService.assignManagerProject(projectId, managerId);
 	}
 	
+	@PutMapping("/associateDepartmentAndManager")
+	public ResponseEntity<Response<Department>> associateDepartmentAManager(@RequestParam("deptId") int deptId,
+			@RequestParam("managerId") int managerId){
+		
+		return ceoService.associateDepartmentWithManager(deptId, managerId);
+	}
 	
 }

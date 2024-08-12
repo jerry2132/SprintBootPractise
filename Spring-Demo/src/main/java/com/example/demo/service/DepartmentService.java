@@ -14,5 +14,7 @@ public interface DepartmentService {
 	public ResponseEntity<Response<Department>> saveDepartment(Department dept);
 	
 	public ResponseEntity<Response<List<Department>>> getAllDepartment(int pageNumber, int pageSize);
+	
+	public ResponseEntity<Response<Department>> associateDepartmentWithManager(int deptId,int managerId);
 
 }
