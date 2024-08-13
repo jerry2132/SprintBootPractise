@@ -12,6 +12,7 @@ import com.example.demo.dao.CeoDao;
 import com.example.demo.dao.DepartmentDao;
 import com.example.demo.dto.Ceo;
 import com.example.demo.dto.Department;
+import com.example.demo.dto.Employee;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
 import com.example.demo.dto.User;
@@ -98,6 +99,18 @@ public class CeoServiceImpl implements CeoService {
 	public ResponseEntity<Response<Department>> associateDepartmentWithManager(int deptId, int managerId) {
 		// TODO Auto-generated method stub
 		return deptService.associateDepartmentWithManager(deptId, managerId);
+	}
+
+	@Override
+	public ResponseEntity<Response<List<Manager>>> allFreeManagers() {
+		// TODO Auto-generated method stub
+		return managerService.getAllFreeManagers();
+	}
+
+	@Override
+	public ResponseEntity<Response<Department>> assignEmployeeDepartment(int deptId,List<Integer> empList) {
+		// TODO Auto-generated method stub
+		return deptService.assignEmployeeToDepartment(deptId, empList);
 	}
 
 }

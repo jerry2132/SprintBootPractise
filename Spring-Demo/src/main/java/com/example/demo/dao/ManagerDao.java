@@ -27,4 +27,8 @@ public class ManagerDao {
 	public List<Manager> getAllManagers(int pageNumber,int pageSize){
 		return managerRepo.findAll(PageRequest.of(pageNumber, pageSize)).toList();
 	}
+	
+	public List<Manager> getAllManager(){
+		return managerRepo.findAll();
+	}
 }

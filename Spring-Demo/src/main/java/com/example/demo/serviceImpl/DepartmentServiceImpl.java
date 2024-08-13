@@ -1,8 +1,10 @@
 package com.example.demo.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,11 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.DepartmentDao;
+import com.example.demo.dao.EmployeeDao;
 import com.example.demo.dao.ManagerDao;
 import com.example.demo.dto.Department;
+import com.example.demo.dto.Employee;
 import com.example.demo.exception.IdException;
 import com.example.demo.response.Response;
 import com.example.demo.service.DepartmentService;
+import com.example.demo.service.ManagerService;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -24,6 +29,11 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 	@Autowired
 	private ManagerDao managerDao;
+
+	@Autowired
+	private EmployeeDao employeeDao;
+
+	
 
 	@Override
 	public ResponseEntity<Response<Department>> saveDepartment(Department dept) {
@@ -94,6 +104,65 @@ public class DepartmentServiceImpl implements DepartmentService {
 		Response<Department> response = Response.<Department>builder().status("success")
 				.message("successfully associated").data(department.get()).build();
 		return new ResponseEntity<Response<Department>>(response, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Response<Department>> assignEmployeeToDepartment(int deptId, List<Integer> empList) {
+		// TODO Auto-generated method stub
+
+		if (deptDao.findByDeptId(deptId).isEmpty())
+			throw new IdException("department id is not present");
+		
+		Department department = deptDao.findByDeptId(deptId).get();
+		List<Integer> invalid = new ArrayList<>();
+		List<Integer> alreadyPresent = new ArrayList<>();
+		List<Employee> validEmployee = new ArrayList<>();
+
+		for (Integer empId : empList) {
+
+			if (employeeDao.findEmployee(empId).isEmpty())
+				invalid.add(empId);
+
+			else if(checkIfemployeeAlreadyHasADepartment(empId))
+				alreadyPresent.add(empId);
+			else
+				validEmployee.add(employeeDao.findEmployee(empId).get());
+
+		}
+		
+		if(!validEmployee.isEmpty()) {
+			department.setEmployee(validEmployee);
+			deptDao.saveDepartment(department);
+			
+		}
+		
+		System.out.println(invalid);
+		System.out.println(alreadyPresent);
+		System.out.println(validEmployee);
+		
+		String validMessage = validEmployee.isEmpty()?"":"id saved "+validEmployee.stream()
+			.map(e -> e.getEmployeeId()+" ").collect(Collectors.joining(" | "));
+		
+		String invalidMessage = invalid.isEmpty()?"":" || id's not present "+invalid.stream()
+			.map(e -> e.intValue()+" ")
+			.collect(Collectors.joining(" | "));
+		
+		String alreadyMessage = alreadyPresent.isEmpty()?"":" || already present "+alreadyPresent.stream()
+			.map(e -> e.intValue()+" ").collect(Collectors.joining(" | "));
+		
+		String finalMessage = (validMessage.isEmpty()?"":validMessage) + (invalidMessage.isEmpty()?"":invalidMessage)
+				+(alreadyMessage.isEmpty()?"":alreadyMessage);
+
+		Response<Department> response = Response.<Department>builder().status("success")
+				.message(finalMessage)
+				.data(department).build();
+		
+		return new ResponseEntity<Response<Department>>(response,HttpStatus.OK);
+	}
+	
+	public boolean checkIfemployeeAlreadyHasADepartment(int empId) {
+		return deptDao.getAllDepartment().stream().flatMap(e -> e.getEmployee().stream())
+				.anyMatch(m -> m.getEmployeeId() == empId);
 	}
 
 }

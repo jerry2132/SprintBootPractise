@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.Department;
+import com.example.demo.dto.Employee;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
 import com.example.demo.response.Response;
@@ -45,6 +47,17 @@ public class CeoController {
 			@RequestParam("managerId") int managerId){
 		
 		return ceoService.associateDepartmentWithManager(deptId, managerId);
+	}
+	
+	@GetMapping("/freeManagers")
+	public ResponseEntity<Response<List<Manager>>> getAllFreeManager(){
+		return ceoService.allFreeManagers();
+	}
+	
+	@PutMapping("/assignEmployeeDepartment")
+	public ResponseEntity<Response<Department>> assignEmployeeToDepartment(@RequestParam("deptId") int deptId,
+			@RequestBody List<Integer> empId){
+		return ceoService.assignEmployeeDepartment(deptId, empId);
 	}
 	
 }

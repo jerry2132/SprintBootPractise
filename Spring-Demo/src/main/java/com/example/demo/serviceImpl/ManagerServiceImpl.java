@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.ManagerDao;
 import com.example.demo.dao.ProjectDao;
+import com.example.demo.dto.Employee;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.User;
 import com.example.demo.exception.IdException;
@@ -126,13 +127,14 @@ public class ManagerServiceImpl implements ManagerService {
 			return new ResponseEntity<Response<Manager>>(response, HttpStatus.ALREADY_REPORTED);
 		}
 
-		Optional<Manager> manager = managerDao.findById(managerId).map(man -> {man.setProject(projectDao.findProject(projectId).get());
-		
-		return managerDao.saveManager(man);
+		Optional<Manager> manager = managerDao.findById(managerId).map(man -> {
+			man.setProject(projectDao.findProject(projectId).get());
+
+			return managerDao.saveManager(man);
 		});
-		
+
 		System.out.println(manager.get());
-		
+
 //		
 //		Manager man = managerDao.findById(managerId).get();
 //		man.setProject(projectDao.findProject(projectId).get());
@@ -142,6 +144,46 @@ public class ManagerServiceImpl implements ManagerService {
 		Response<Manager> response = Response.<Manager>builder().status("success").message("successfullyy associated")
 				.data(manager.get()).build();
 		return new ResponseEntity<Response<Manager>>(response, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Response<List<Manager>>> getAllFreeManagers() {
+		// TODO Auto-generated method stub
+
+		List<Manager> managerList = managerDao.getAllManager().stream().filter(e -> e.getProject() == null).toList();
+		Response<List<Manager>> response = Response.<List<Manager>>builder().status("success")
+				.message(" list of all managers doesnt have any project").data(managerList).build();
+		return new ResponseEntity<Response<List<Manager>>>(response, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Response<Manager>> assignEmployeeManager(List<Employee> emp, int managerId) {
+		// TODO Auto-generated method stub
+		
+		if(managerDao.findById(managerId).isEmpty()) {
+			throw new IdException("manager not found by this id");
+		}
+		
+		if(!managerDao.findById(managerId).get().getUserName().equals(SecurityContextHolder.getContext()
+				.getAuthentication().getName())) {
+			
+			Response<Manager> response = Response.<Manager>builder().status("error")
+					.message("cannot access other page").data(null).build();
+			return new ResponseEntity<Response<Manager>>(response,HttpStatus.FORBIDDEN);
+		}
+		
+		
+		Manager manager = managerDao.findById(managerId).get();
+		
+		
+		
+		
+		return null;
+	}
+	
+	public boolean checkIfemployeeAlreadyHasAManager(int empId) {
+		return managerDao.getAllManager().stream().flatMap(e -> e.getEmployee().stream())
+				.anyMatch(e -> e.getEmployeeId() == empId);
 	}
 
 }

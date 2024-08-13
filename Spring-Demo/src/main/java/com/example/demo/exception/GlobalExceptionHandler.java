@@ -13,11 +13,11 @@ import com.example.demo.response.Response;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(IdException.class)
-	public ResponseEntity<Response<Manager>> handleIdException(IdException e){
+	public ResponseEntity<Response<String>> handleIdException(IdException e){
 		
-		Response<Manager> response = Response.<Manager>builder().status("error").message(e.getMessage())
+		Response<String> response = Response.<String>builder().status("error").message(e.getMessage())
 				.data(null).build();
-		return new ResponseEntity<Response<Manager>>(response, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Response<String>>(response, HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(NotAuthorized.class)
