@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,9 +36,25 @@ public class ManagerController {
 		return managerService.getDetails(managerId);
 	}
 
-//	public ResponseEntity<Response<Manager>> assignEmployeeManager(@RequestBody List<Employee> emp,
-//			@RequestParam("managerId") int managerId){
-//		
-//	}
+	@PutMapping("/assignEmployeeManager")//also assign employee project if manager.project != null
+	public ResponseEntity<Response<Manager>> assignEmployeeManager(
+			@RequestParam("managerId") int managerId,@RequestBody List<Integer> empList){
+		
+		return managerService.assignEmployeeManager(managerId, empList);
+		
+	}
+	
+	
+	@PutMapping("/assignEmployeeProject")//
+	public ResponseEntity<Response<Manager>> assignEmployeeProject(
+			@RequestParam("managerId") int managerId){
+		return managerService.assignEmployeeProject(managerId);
+	}
+	
+	
+	@PutMapping("/removeEmployeeFromProject")
+	public ResponseEntity<Response<Employee>> employeeListOfManager(@RequestParam("employeeId") int employeeId){
+		return managerService.removeEmployeeFromProject(employeeId);
+	}
 	
 }

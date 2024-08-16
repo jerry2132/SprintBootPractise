@@ -135,10 +135,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 			deptDao.saveDepartment(department);
 			
 		}
-		
-		System.out.println(invalid);
-		System.out.println(alreadyPresent);
-		System.out.println(validEmployee);
+//		
+//		System.out.println(invalid);
+//		System.out.println(alreadyPresent);
+//		System.out.println(validEmployee);
 		
 		String validMessage = validEmployee.isEmpty()?"":"id saved "+validEmployee.stream()
 			.map(e -> e.getEmployeeId()+" ").collect(Collectors.joining(" | "));

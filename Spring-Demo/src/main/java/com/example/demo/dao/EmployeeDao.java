@@ -31,4 +31,8 @@ public class EmployeeDao {
 	public Optional<Employee> findEmployee(int empId){
 		return employeeRepo.findById(empId);
 	}
+	
+	public List<Employee> saveAll(List<Employee> emplList) {
+		return employeeRepo.saveAll(emplList);
+	}
 }

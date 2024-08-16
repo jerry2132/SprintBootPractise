@@ -22,8 +22,9 @@ public interface ManagerService {
 	
 	public ResponseEntity<Response<List<Manager>>> getAllFreeManagers();//those doesnt have any projects
 
-	public ResponseEntity<Response<Manager>> assignEmployeeManager(List<Employee> emp, int managerId);
+	public ResponseEntity<Response<Manager>> assignEmployeeManager(int managerId,List<Integer> empList);
 	
-	public boolean checkIfemployeeAlreadyHasAManager(int empId);
+	public ResponseEntity<Response<Manager>> assignEmployeeProject(int managerId);
 	
+	public ResponseEntity<Response<Employee>> removeEmployeeFromProject(int employeeId);
 }

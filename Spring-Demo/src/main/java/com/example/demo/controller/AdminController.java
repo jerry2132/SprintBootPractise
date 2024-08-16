@@ -79,12 +79,6 @@ public class AdminController {
 		return deptService.getAllDepartment(page, size);
 	}
 	
-	@GetMapping("/deletemployee/{employeeId}")
-	public ResponseEntity<Response<Employee>> deleteEmployee(@PathVariable("employeeId") int empId){
-		
-		return employeeService.deleteemployee(empId);
-	}
-	
 	@GetMapping("/addCeo")
 	public ResponseEntity<Response<Ceo>> addCeo(@RequestBody Ceo ceo){
 		return ceoService.addCeo(ceo);
