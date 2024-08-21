@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.demo.dao.EmployeeDao;
 import com.example.demo.dao.ManagerDao;
@@ -18,6 +20,7 @@ import com.example.demo.dao.ProjectDao;
 import com.example.demo.dto.Employee;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
+import com.example.demo.dto.ProjectStatus;
 import com.example.demo.dto.User;
 import com.example.demo.exception.IdException;
 import com.example.demo.exception.NotAuthorized;
@@ -42,6 +45,9 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private RegistrationService registrationService;
+	
+	@Autowired
+	private WebClient webClient;
 
 	@Override
 	public ResponseEntity<Response<Manager>> saveManager(Manager manager) {
@@ -336,4 +342,52 @@ public class ManagerServiceImpl implements ManagerService {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	/*******************************************************************************************************/
+
+	public Manager getCurrentManager() {
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		return managerDao.findByUserName(userName).get();
+	}
+
+	@Override
+	public ResponseEntity<Response<Manager>> changeProjectStatus(String status) {
+		// TODO Auto-generated method stub
+
+		Manager manager = getCurrentManager();
+
+		if (manager.getProject() == null)
+			throw new IdException("manager doesnt have any project");
+
+		manager.getProject().setStatus(ProjectStatus.valueOf(status));
+		managerDao.saveManager(manager);
+
+		Response<Manager> response = Response.<Manager>builder().status("success")
+				.message("project statud chnaged")
+				.data(manager).build();
+		
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
+
+	/*****************************************************************************************************/
+	
+	@Override
+	public ResponseEntity<Response<List<Employee>>> getAllEmployeeWithGivenRating(int rating) {
+		// TODO Auto-generated method stub
+		if(rating > 10)
+			throw new IdException("searching for rating below 11");
+		
+		List<Employee> employeeList = employeeDao.getAllEmployee().stream()
+				.filter(e -> e.getEmployeeRating() >= rating).toList();
+		
+		Response<List<Employee>> response = Response.<List<Employee>>builder()
+				.status("success")
+				.message("employees found")
+				.data(employeeList).build();
+		
+		return new ResponseEntity<Response<List<Employee>>>(response,HttpStatus.OK);
+	}
+	
+	
+	/********************************************************************************************************/
 }

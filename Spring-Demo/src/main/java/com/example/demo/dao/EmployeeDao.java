@@ -35,4 +35,12 @@ public class EmployeeDao {
 	public List<Employee> saveAll(List<Employee> emplList) {
 		return employeeRepo.saveAll(emplList);
 	}
+	
+	public List<Employee> getAllEmployee(){
+		return employeeRepo.findAll();
+	}
+	
+	public Optional<Employee> findByUserName(String userName){
+		return employeeRepo.findByUserName(userName);
+	}
 }

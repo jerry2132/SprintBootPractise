@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -23,19 +24,20 @@ public class Project {
 
 	@Id
 	private int projectId;
-	
+
 	private String projectName;
-	
+
 	@CurrentTimestamp
 	private LocalDate startDate;
-	
+
 	private LocalDate endDate;
-	
+
 	@Enumerated(EnumType.STRING)
 	private ProjectStatus status;
-	
+
 	@OneToOne(mappedBy = "project")
 	@JsonBackReference
-	private  Manager manager;
-	
+	@EqualsAndHashCode.Exclude
+	private Manager manager;
+
 }

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.Department;
-import com.example.demo.dto.Employee;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
 import com.example.demo.response.Response;
@@ -58,6 +58,12 @@ public class CeoController {
 	public ResponseEntity<Response<Department>> assignEmployeeToDepartment(@RequestParam("deptId") int deptId,
 			@RequestBody List<Integer> empId){
 		return ceoService.assignEmployeeDepartment(deptId, empId);
+	}
+	
+	@GetMapping("/getDepartmentAndManager")
+	public ResponseEntity<Response<Map<Integer, Integer>>> getAllDepartmentIdAndManager()
+	{
+		return ceoService.getDepartmentIdAndEmployee();
 	}
 	
 }

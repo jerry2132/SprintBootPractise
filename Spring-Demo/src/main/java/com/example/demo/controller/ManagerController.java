@@ -57,4 +57,19 @@ public class ManagerController {
 		return managerService.removeEmployeeFromProject(employeeId);
 	}
 	
+	
+	@PutMapping("/changeProjectStatus")
+	public ResponseEntity<Response<Manager>> changeProjectStatus(@RequestParam("projectStatus") String status){
+		return managerService.changeProjectStatus(status);
+	}
+	
+	@GetMapping("/getByRating")
+	public ResponseEntity<Response<List<Employee>>> getAllEmployeeAboveGivenRating(@RequestParam("rating")
+	int rating){
+		return managerService.getAllEmployeeWithGivenRating(rating);
+	}
+	
+
+	
+	
 }

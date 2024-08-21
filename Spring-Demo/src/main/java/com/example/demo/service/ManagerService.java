@@ -27,4 +27,9 @@ public interface ManagerService {
 	public ResponseEntity<Response<Manager>> assignEmployeeProject(int managerId);
 	
 	public ResponseEntity<Response<Employee>> removeEmployeeFromProject(int employeeId);
+	
+	public ResponseEntity<Response<Manager>> changeProjectStatus(String status);
+	
+	public ResponseEntity<Response<List<Employee>>> getAllEmployeeWithGivenRating(int rating);
+
 }

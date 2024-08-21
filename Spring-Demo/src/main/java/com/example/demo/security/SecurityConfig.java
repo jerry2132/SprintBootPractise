@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.demo.userDetailsImp.UserDetailsServiceIml;
 
@@ -21,6 +23,9 @@ public class SecurityConfig {
 
 //	@Autowired
 //	private UserDetailsServiceIml userDetailsServiceImpl;
+
+	@Value("${manger.base.url}")
+	private String baseUrl;
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -39,18 +44,14 @@ public class SecurityConfig {
 
 		http.csrf(csrf -> csrf.disable());
 		http.authorizeHttpRequests(
-				req -> req.requestMatchers("/user/**").hasAnyRole("USER","ADMIN").requestMatchers("/admin/**")
-						.hasRole("ADMIN").
-						requestMatchers("/manager/**").hasRole("MANAGER").
-						requestMatchers("/ceo/**").hasRole("CEO").
-						requestMatchers("/public/**").permitAll().anyRequest().authenticated());
+				req -> req.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN").requestMatchers("/admin/**")
+						.hasRole("ADMIN").requestMatchers("/manager/**").hasRole("MANAGER").requestMatchers("/ceo/**")
+						.hasRole("CEO").requestMatchers("/public/**").permitAll().anyRequest().authenticated());
 
 //		http.formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
 //		http.formLogin(formlogin -> formlogin.successHandler(successHandler));
 		http.formLogin(Customizer.withDefaults());
-		http.httpBasic(Customizer.withDefaults());//for postman api
-
-	
+		http.httpBasic(Customizer.withDefaults());// for postman api
 
 //        http
 //                .authorizeHttpRequests(requests -> requests
@@ -83,6 +84,11 @@ public class SecurityConfig {
 		provider.setUserDetailsService(userDetailsService());
 
 		return provider;
+	}
+
+	@Bean
+	WebClient webClient() {
+		return WebClient.builder().baseUrl(baseUrl).build();
 	}
 
 }

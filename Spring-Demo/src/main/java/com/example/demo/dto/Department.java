@@ -2,6 +2,8 @@ package com.example.demo.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -27,6 +29,7 @@ public class Department {
 	private String location;
 	
 	@OneToOne
+	@JsonBackReference
 	private Manager manager;
 	
 	@OneToMany

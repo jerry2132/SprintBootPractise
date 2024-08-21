@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.Employee;
+import com.example.demo.dto.ManagerLim;
 import com.example.demo.response.Response;
 
 @Service
@@ -16,4 +17,8 @@ public interface EmployeeService {
 	public ResponseEntity<Response<List<Employee>>> getAllemployee(int pageNumber, int size);
 
 	public ResponseEntity<Response<Employee>> deleteemployee(int empId);
+	
+	public ResponseEntity<Response<Employee>> getProfile(int empId);
+	
+	public ResponseEntity<Response<ManagerLim>> getManagerDetails();
 }

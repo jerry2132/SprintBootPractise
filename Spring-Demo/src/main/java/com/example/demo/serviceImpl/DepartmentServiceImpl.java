@@ -16,6 +16,7 @@ import com.example.demo.dao.EmployeeDao;
 import com.example.demo.dao.ManagerDao;
 import com.example.demo.dto.Department;
 import com.example.demo.dto.Employee;
+import com.example.demo.dto.Manager;
 import com.example.demo.exception.IdException;
 import com.example.demo.response.Response;
 import com.example.demo.service.DepartmentService;
@@ -32,8 +33,6 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 	@Autowired
 	private EmployeeDao employeeDao;
-
-	
 
 	@Override
 	public ResponseEntity<Response<Department>> saveDepartment(Department dept) {
@@ -112,54 +111,77 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 		if (deptDao.findByDeptId(deptId).isEmpty())
 			throw new IdException("department id is not present");
-		
+
 		Department department = deptDao.findByDeptId(deptId).get();
 		List<Integer> invalid = new ArrayList<>();
 		List<Integer> alreadyPresent = new ArrayList<>();
 		List<Employee> validEmployee = new ArrayList<>();
+
+		if (department.getManager() != null) {
+
+			List<Employee> employeeList = department.getManager().getEmployee();
+			employeeList.addAll(department.getEmployee());
+
+			if (!employeeList.isEmpty()) {
+
+				for (Employee employee : employeeList) {
+
+					empList.add(employee.getEmployeeId());
+					
+				}
+			}
+
+		}
 
 		for (Integer empId : empList) {
 
 			if (employeeDao.findEmployee(empId).isEmpty())
 				invalid.add(empId);
 
-			else if(checkIfemployeeAlreadyHasADepartment(empId))
+			else if (checkIfemployeeAlreadyHasADepartment(empId) || !checkIfManagerHasEmployeeId(department.getManager(),empId))
 				alreadyPresent.add(empId);
 			else
 				validEmployee.add(employeeDao.findEmployee(empId).get());
 
 		}
-		
-		if(!validEmployee.isEmpty()) {
+
+		if (!validEmployee.isEmpty()) {
 			department.setEmployee(validEmployee);
 			deptDao.saveDepartment(department);
-			
+
 		}
 //		
 //		System.out.println(invalid);
 //		System.out.println(alreadyPresent);
 //		System.out.println(validEmployee);
-		
-		String validMessage = validEmployee.isEmpty()?"":"id saved "+validEmployee.stream()
-			.map(e -> e.getEmployeeId()+" ").collect(Collectors.joining(" | "));
-		
-		String invalidMessage = invalid.isEmpty()?"":" || id's not present "+invalid.stream()
-			.map(e -> e.intValue()+" ")
-			.collect(Collectors.joining(" | "));
-		
-		String alreadyMessage = alreadyPresent.isEmpty()?"":" || already present "+alreadyPresent.stream()
-			.map(e -> e.intValue()+" ").collect(Collectors.joining(" | "));
-		
-		String finalMessage = (validMessage.isEmpty()?"":validMessage) + (invalidMessage.isEmpty()?"":invalidMessage)
-				+(alreadyMessage.isEmpty()?"":alreadyMessage);
 
-		Response<Department> response = Response.<Department>builder().status("success")
-				.message(finalMessage)
+		String validMessage = validEmployee.isEmpty() ? ""
+				: "id saved "
+						+ validEmployee.stream().map(e -> e.getEmployeeId() + " ").collect(Collectors.joining(" | "));
+
+		String invalidMessage = invalid.isEmpty() ? ""
+				: " || id's not present "
+						+ invalid.stream().map(e -> e.intValue() + " ").collect(Collectors.joining(" | "));
+
+		String alreadyMessage = alreadyPresent.isEmpty() ? ""
+				: " || already present "
+						+ alreadyPresent.stream().map(e -> e.intValue() + " ").collect(Collectors.joining(" | "));
+
+		String finalMessage = (validMessage.isEmpty() ? "" : validMessage)
+				+ (invalidMessage.isEmpty() ? "" : invalidMessage) + (alreadyMessage.isEmpty() ? "" : alreadyMessage);
+
+		Response<Department> response = Response.<Department>builder().status("success").message(finalMessage)
 				.data(department).build();
-		
-		return new ResponseEntity<Response<Department>>(response,HttpStatus.OK);
+
+		return new ResponseEntity<Response<Department>>(response, HttpStatus.OK);
 	}
 	
+	
+	public boolean checkIfManagerHasEmployeeId(Manager manager,int empId) {
+		
+		return manager.getEmployee().stream().anyMatch(e -> e.getEmployeeId() == empId);
+	}
+
 	public boolean checkIfemployeeAlreadyHasADepartment(int empId) {
 		return deptDao.getAllDepartment().stream().flatMap(e -> e.getEmployee().stream())
 				.anyMatch(m -> m.getEmployeeId() == empId);

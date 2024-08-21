@@ -1,6 +1,8 @@
 package com.example.demo.serviceImpl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +14,6 @@ import com.example.demo.dao.CeoDao;
 import com.example.demo.dao.DepartmentDao;
 import com.example.demo.dto.Ceo;
 import com.example.demo.dto.Department;
-import com.example.demo.dto.Employee;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
 import com.example.demo.dto.User;
@@ -111,6 +112,29 @@ public class CeoServiceImpl implements CeoService {
 	public ResponseEntity<Response<Department>> assignEmployeeDepartment(int deptId,List<Integer> empList) {
 		// TODO Auto-generated method stub
 		return deptService.assignEmployeeToDepartment(deptId, empList);
+	}
+
+	@Override
+	public ResponseEntity<Response<Map<Integer, Integer>>> getDepartmentIdAndEmployee() {
+		// TODO Auto-generated method stub
+
+		//to get department id and whole manager 
+//		Map<Integer, Manager> man = deptDao.getAllDepartment().stream()
+//				.filter(e -> e.getManager() != null)
+//				.collect(Collectors.toMap(Department::getDepartmentId, Department::getManager));
+		
+		//to get department id and only manager id
+		Map<Integer, Integer> man = deptDao.getAllDepartment().stream()
+		.filter(e -> e.getManager() != null)
+		.collect(Collectors.toMap(Department::getDepartmentId, department -> department.getManager().getManagerId()));
+
+	
+//	System.out.println(man);
+	Response<Map<Integer, Integer>> response= Response.<Map<Integer, Integer>>builder()
+			.status("success").message("result").data(man).build();
+	
+	return new ResponseEntity<>(response,HttpStatus.OK);
+	
 	}
 
 
