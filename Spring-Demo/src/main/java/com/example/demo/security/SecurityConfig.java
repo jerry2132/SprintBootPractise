@@ -1,19 +1,25 @@
 package com.example.demo.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.example.demo.jwt.JwtRequestFilter;
 import com.example.demo.userDetailsImp.UserDetailsServiceIml;
 
 @Configuration
@@ -26,6 +32,9 @@ public class SecurityConfig {
 
 	@Value("${manger.base.url}")
 	private String baseUrl;
+
+	@Autowired
+	private JwtRequestFilter jwtRequestFilter;
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -53,23 +62,28 @@ public class SecurityConfig {
 		http.formLogin(Customizer.withDefaults());
 		http.httpBasic(Customizer.withDefaults());// for postman api
 
-//        http
-//                .authorizeHttpRequests(requests -> requests
-//                        .requestMatchers("/user/**").hasRole("USER")
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .anyRequest().authenticated())
-//                .formLogin(login -> login
-//                        .loginPage("/login") // Custom login page
-//                        .permitAll())
-//                .logout(logout -> logout
-//                        .permitAll());
+		http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authenticationProvider(daoAuthenticationProvider())
+				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
-//		http.csrf().disable().authorizeHttpRequests().requestMatchers("/public/**").permitAll()
-//		.and().authorizeHttpRequests().requestMatchers("/admin/**").hasRole("ADMIN")
-//		.requestMatchers("/user/**").hasRole("USER")
-//		.anyRequest().authenticated();
-//		
 		return http.build();
+		
+//      http
+//      .authorizeHttpRequests(requests -> requests
+//              .requestMatchers("/user/**").hasRole("USER")
+//              .requestMatchers("/admin/**").hasRole("ADMIN")
+//              .anyRequest().authenticated())
+//      .formLogin(login -> login
+//              .loginPage("/login") // Custom login page
+//              .permitAll())
+//      .logout(logout -> logout
+//              .permitAll());
+
+//http.csrf().disable().authorizeHttpRequests().requestMatchers("/public/**").permitAll()
+//.and().authorizeHttpRequests().requestMatchers("/admin/**").hasRole("ADMIN")
+//.requestMatchers("/user/**").hasRole("USER")
+//.anyRequest().authenticated();
+//
 	}
 
 	@Bean
@@ -85,10 +99,16 @@ public class SecurityConfig {
 
 		return provider;
 	}
-
+	
+	
 	@Bean
-	WebClient webClient() {
-		return WebClient.builder().baseUrl(baseUrl).build();
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
 	}
+
+//	@Bean
+//	WebClient webClient() {
+//		return WebClient.builder().baseUrl(baseUrl).build();
+//	}
 
 }

@@ -45,9 +45,7 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private RegistrationService registrationService;
-	
-	@Autowired
-	private WebClient webClient;
+
 
 	@Override
 	public ResponseEntity<Response<Manager>> saveManager(Manager manager) {
