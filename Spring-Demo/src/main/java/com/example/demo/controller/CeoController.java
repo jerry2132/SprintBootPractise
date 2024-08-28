@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +30,15 @@ public class CeoController {
 //	
 	@Autowired
 	private CeoService ceoService;
+	
+	@GetMapping("/home")
+	public ResponseEntity<Response<String>> homePage(Principal principal){
+		
+		Response<String> response = Response.<String>builder().status("suucesss")
+				.message("welcome manager")
+				.data(principal.getName()).build();
+		return new ResponseEntity<Response<String>>(response,HttpStatus.ACCEPTED);
+	}
 
 	@PostMapping("/saveProject")
 	public ResponseEntity<Response<List<Project>>> addProject(@RequestBody List<Project> project){

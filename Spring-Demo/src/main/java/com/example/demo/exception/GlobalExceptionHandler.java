@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.demo.response.Response;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -26,13 +29,6 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<Response<String>>(response, HttpStatus.NOT_FOUND);
 		
 	}
-	
-	@ExceptionHandler(TokenExepiredException.class)
-	public ResponseEntity<Response<String>> tokenExepiredHandler(TokenExepiredException e){
-		
-		Response<String> response = Response.<String>builder().status("error").message(e.getMessage())
-				.data(null).build();
-		return new ResponseEntity<Response<String>>(response, HttpStatus.BAD_REQUEST);
-	}
+
 	
 }

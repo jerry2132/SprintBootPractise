@@ -1,11 +1,12 @@
 package com.example.demo.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,9 +35,17 @@ public class AdminController {
 
 	@Autowired
 	private DepartmentService deptService;
-	
+
 	@Autowired
 	private CeoService ceoService;
+
+	@GetMapping("/home")
+	public ResponseEntity<Response<String>> homePage(Principal principal) {
+
+		Response<String> response = Response.<String>builder().status("success").message("welcome manager")
+				.data(principal.getName()).build();
+		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+	}
 
 	@GetMapping("/saveManager")
 	public ResponseEntity<Response<Manager>> saveManager(@RequestBody Manager manager) {
@@ -56,31 +65,34 @@ public class AdminController {
 
 		return deptService.saveDepartment(dept);
 	}
-	
+
 	@GetMapping("/getAllManagers")
-	public ResponseEntity<Response<List<Manager>>> getAllManager(@RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "5") int size){
-		
-		return managerService.getAllManagers(page,size);
+	public ResponseEntity<Response<List<Manager>>> getAllManager(
+			@RequestParam(value = "page", defaultValue = "0") int page,
+			@RequestParam(value = "size", defaultValue = "5") int size) {
+
+		return managerService.getAllManagers(page, size);
 	}
 
 	@GetMapping("/getAllEmployee")
-	public ResponseEntity<Response<List<Employee>>> getAllEmployee(@RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "5") int size){
-		
+	public ResponseEntity<Response<List<Employee>>> getAllEmployee(
+			@RequestParam(value = "page", defaultValue = "0") int page,
+			@RequestParam(value = "size", defaultValue = "5") int size) {
+
 		return employeeService.getAllemployee(page, size);
-		
+
 	}
-	
+
 	@GetMapping("/getAllDepartments")
-	public ResponseEntity<Response<List<Department>>> getAllDepartment(@RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "5") int size){
-		
+	public ResponseEntity<Response<List<Department>>> getAllDepartment(
+			@RequestParam(value = "page", defaultValue = "0") int page,
+			@RequestParam(value = "size", defaultValue = "5") int size) {
+
 		return deptService.getAllDepartment(page, size);
 	}
-	
+
 	@GetMapping("/addCeo")
-	public ResponseEntity<Response<Ceo>> addCeo(@RequestBody Ceo ceo){
+	public ResponseEntity<Response<Ceo>> addCeo(@RequestBody Ceo ceo) {
 		return ceoService.addCeo(ceo);
 	}
 }

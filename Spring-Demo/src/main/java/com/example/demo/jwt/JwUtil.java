@@ -10,11 +10,15 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class JwUtil {
 
@@ -48,8 +52,7 @@ public class JwUtil {
 
 	private String createToken(Map<String, Object> claims, String subject) {
 		return Jwts.builder().claims(claims).subject(subject).issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
-				.signWith(getSignKey()).compact();
+				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 500)).signWith(getSignKey()).compact();
 	}
 
 	private SecretKey getSignKey() {

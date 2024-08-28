@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class ManagerLim {
 
+	private int managerId;
+	
 	private String managerName;
 	
 	private long mobile;

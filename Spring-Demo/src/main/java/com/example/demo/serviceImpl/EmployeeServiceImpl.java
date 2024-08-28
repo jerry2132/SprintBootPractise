@@ -12,8 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.EmployeeDao;
+import com.example.demo.dao.InquiryChannelDao;
 import com.example.demo.dao.ManagerDao;
 import com.example.demo.dto.Employee;
+import com.example.demo.dto.InquiryChannel;
+import com.example.demo.dto.InquiryStatus;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.ManagerLim;
 import com.example.demo.dto.User;
@@ -40,6 +43,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private ManagerDao managerDao;
+
+	@Autowired
+	private InquiryChannelDao inquiryChannelDao;
 
 	@Override
 	public ResponseEntity<Response<Employee>> saveEmployee(Employee employee) {
@@ -88,6 +94,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return user;
 	}
 
+	/*****************************************************************************************************/
+
 	@Override
 	public ResponseEntity<Response<List<Employee>>> getAllemployee(int pageNumber, int size) {
 		// TODO Auto-generated method stub
@@ -100,6 +108,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return new ResponseEntity<Response<List<Employee>>>(response, HttpStatus.OK);
 
 	}
+
+	/*******************************************************************************************************/
 
 	@Override
 	public ResponseEntity<Response<Employee>> deleteemployee(int empId) {
@@ -122,6 +132,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return new ResponseEntity<Response<Employee>>(response, HttpStatus.OK);
 	}
 
+	/*******************************************************************************************************/
+
 	@Override
 	public ResponseEntity<Response<Employee>> getProfile(int empId) {
 		// TODO Auto-generated method stub
@@ -139,27 +151,28 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return new ResponseEntity<Response<Employee>>(response, HttpStatus.OK);
 	}
 
+	/************************************************************************************************************/
+
 	@Override
 	public ResponseEntity<Response<ManagerLim>> getManagerDetails() {
 		// TODO Auto-generated method stu
-		
+
 		log.info("entering service implementation");
-		
+
 		log.info("trying to get meployee");
 		Employee employee = employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName())
 				.get();
 
 		log.info("employee got");
 //		System.out.println(employee);
-		
+
 //		Manager manager = employee.getProject().getManager();   can do this also 
-		
+
 		log.info("getting optional Managerr");
 		Optional<Manager> optionalManager = managerDao.getAllManager().stream()
 				.filter(e -> e.getEmployee().contains(employee)).findAny();
 		log.info("optional employee got");
-		
-		
+
 		if (optionalManager.isEmpty()) {
 			throw new IdException("manager is  not assigned to you");
 		}
@@ -167,17 +180,42 @@ public class EmployeeServiceImpl implements EmployeeService {
 		log.info("getting manager");
 		Manager manager = optionalManager.get();
 		log.info("manager got");
-		
+
 		log.info("converting manager to managerLim");
-		ManagerLim managerLim = new ManagerLim((manager.getFirstName() + manager.getLastName()),
+		ManagerLim managerLim = new ManagerLim(manager.getManagerId(), (manager.getFirstName() + manager.getLastName()),
 				manager.getPhoneNumber(), manager.getEmployee());
 		log.info("converted successfully");
-		
-		Response<ManagerLim> response = Response.<ManagerLim>builder().status("success")
-				.message("manager found")
+
+		Response<ManagerLim> response = Response.<ManagerLim>builder().status("success").message("manager found")
 				.data(managerLim).build();
-		
-		return new ResponseEntity<Response<ManagerLim>>(response,HttpStatus.OK);
+
+		return new ResponseEntity<Response<ManagerLim>>(response, HttpStatus.OK);
+	}
+
+	/*******************************************************************************************************/
+
+	@Override
+	public ResponseEntity<Response<InquiryChannel>> raiseInquiryRequest(InquiryChannel inquiryChannel) {
+		// TODO Auto-generated method stub
+
+		if (getManagerDetails().getBody().getData().getManagerId() != inquiryChannel.getInquireToId()) {
+
+			Response<InquiryChannel> response = Response.<InquiryChannel>builder().status("error")
+					.message("the rquested inquiry manager is not assigned to you").data(null).build();
+			return new ResponseEntity<Response<InquiryChannel>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		Employee employee = employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName())
+				.get();
+
+		inquiryChannel.setCreatedById(employee.getEmployeeId());
+		inquiryChannel.setInquiryStatus(InquiryStatus.RAISED);
+
+		inquiryChannelDao.saveInquiry(inquiryChannel);
+
+		Response<InquiryChannel> response = Response.<InquiryChannel>builder().status("success")
+				.message("request raised with id   " + inquiryChannel.getChannelId()).data(inquiryChannel).build();
+		return new ResponseEntity<Response<InquiryChannel>>(response, HttpStatus.ACCEPTED);
 	}
 
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.Employee;
+import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.ManagerLim;
 import com.example.demo.response.Response;
 
@@ -21,4 +22,6 @@ public interface EmployeeService {
 	public ResponseEntity<Response<Employee>> getProfile(int empId);
 	
 	public ResponseEntity<Response<ManagerLim>> getManagerDetails();
+	
+	public ResponseEntity<Response<InquiryChannel>> raiseInquiryRequest(InquiryChannel inquiryChannel);
 }

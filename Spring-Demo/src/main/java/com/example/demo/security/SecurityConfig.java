@@ -58,8 +58,8 @@ public class SecurityConfig {
 						.hasRole("CEO").requestMatchers("/public/**").permitAll().anyRequest().authenticated());
 
 //		http.formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
-//		http.formLogin(formlogin -> formlogin.successHandler(successHandler));
-		http.formLogin(Customizer.withDefaults());
+		http.formLogin(formlogin -> formlogin.successHandler(customSuccessHandler()));
+//		http.formLogin(Customizer.withDefaults());
 		http.httpBasic(Customizer.withDefaults());// for postman api
 
 		http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -84,6 +84,11 @@ public class SecurityConfig {
 //.requestMatchers("/user/**").hasRole("USER")
 //.anyRequest().authenticated();
 //
+	}
+	
+	@Bean
+	CustomSuccessHandler customSuccessHandler() {
+		return new CustomSuccessHandler();
 	}
 
 	@Bean
