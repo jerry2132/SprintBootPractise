@@ -1,6 +1,7 @@
 package com.example.demo.serviceImpl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,13 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.demo.dao.EmployeeDao;
+import com.example.demo.dao.InquiryChannelDao;
 import com.example.demo.dao.ManagerDao;
 import com.example.demo.dao.ProjectDao;
 import com.example.demo.dto.Employee;
+import com.example.demo.dto.InquiryChannel;
+import com.example.demo.dto.InquiryStatus;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
 import com.example.demo.dto.ProjectStatus;
@@ -46,6 +48,8 @@ public class ManagerServiceImpl implements ManagerService {
 	@Autowired
 	private RegistrationService registrationService;
 
+	@Autowired
+	private InquiryChannelDao inquiryChannelDao;
 
 	@Override
 	public ResponseEntity<Response<Manager>> saveManager(Manager manager) {
@@ -360,32 +364,78 @@ public class ManagerServiceImpl implements ManagerService {
 		manager.getProject().setStatus(ProjectStatus.valueOf(status));
 		managerDao.saveManager(manager);
 
-		Response<Manager> response = Response.<Manager>builder().status("success")
-				.message("project statud chnaged")
+		Response<Manager> response = Response.<Manager>builder().status("success").message("project statud chnaged")
 				.data(manager).build();
-		
-		return new ResponseEntity<>(response,HttpStatus.OK);
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	/*****************************************************************************************************/
-	
+
 	@Override
 	public ResponseEntity<Response<List<Employee>>> getAllEmployeeWithGivenRating(int rating) {
 		// TODO Auto-generated method stub
-		if(rating > 10)
+		if (rating > 10)
 			throw new IdException("searching for rating below 11");
-		
-		List<Employee> employeeList = employeeDao.getAllEmployee().stream()
-				.filter(e -> e.getEmployeeRating() >= rating).toList();
-		
-		Response<List<Employee>> response = Response.<List<Employee>>builder()
-				.status("success")
-				.message("employees found")
-				.data(employeeList).build();
-		
-		return new ResponseEntity<Response<List<Employee>>>(response,HttpStatus.OK);
+
+		List<Employee> employeeList = employeeDao.getAllEmployee().stream().filter(e -> e.getEmployeeRating() >= rating)
+				.toList();
+
+		Response<List<Employee>> response = Response.<List<Employee>>builder().status("success")
+				.message("employees found").data(employeeList).build();
+
+		return new ResponseEntity<Response<List<Employee>>>(response, HttpStatus.OK);
 	}
-	
-	
+
+	/*************************************************************************************************************/
+
+	@Override
+	public ResponseEntity<Response<List<InquiryChannel>>> getInquiryRequest() {
+		// TODO Auto-generated method stub
+
+		int managerId = managerDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName())
+				.get().getManagerId();
+
+		List<InquiryChannel> inquiryChannelsList = inquiryChannelDao.getAll().stream()
+				.filter(e -> e.getInquireToId() == managerId)
+				.sorted(Comparator.comparing(InquiryChannel::getCreatedOn).reversed()).toList();
+
+		if (inquiryChannelsList.isEmpty() || inquiryChannelsList == null) {
+			Response<List<InquiryChannel>> response = Response.<List<InquiryChannel>>builder().status("error")
+					.message("no request").data(null).build();
+			return new ResponseEntity<Response<List<InquiryChannel>>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		Response<List<InquiryChannel>> response = Response.<List<InquiryChannel>>builder().status("success")
+				.message("found ").data(inquiryChannelsList).build();
+		return new ResponseEntity<Response<List<InquiryChannel>>>(response, HttpStatus.FOUND);
+	}
+
+	/**********************************************************************************************************/
+
+	@Override
+	public ResponseEntity<Response<InquiryChannel>> updateInquiryStatus(int channelId, String status) {
+		// TODO Auto-generated method stub
+
+		if (inquiryChannelDao.findById(channelId).isEmpty() || channelId < 0) {
+			Response<InquiryChannel> response = Response.<InquiryChannel>builder().status("error")
+					.message("no data found").data(null).build();
+			return new ResponseEntity<Response<InquiryChannel>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		InquiryChannel inquiryChannel = inquiryChannelDao.findById(channelId).get();
+
+//	InquiryStatus inquiryStatus = InquiryStatus.va
+
+		inquiryChannel.setInquiryStatus(InquiryStatus.valueOf(status.toUpperCase()));
+		
+		inquiryChannelDao.saveInquiry(inquiryChannel);
+
+		Response<InquiryChannel> response = Response.<InquiryChannel>builder().status("success")
+				.message("status changed").data(inquiryChannel).build();
+		return new ResponseEntity<Response<InquiryChannel>>(response, HttpStatus.OK);
+
+	}
+
 	/********************************************************************************************************/
 }

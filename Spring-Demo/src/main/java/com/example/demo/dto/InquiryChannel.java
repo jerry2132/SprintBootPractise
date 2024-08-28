@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CurrentTimestamp;
 
@@ -28,7 +27,7 @@ public class InquiryChannel {
 	private int channelId;
 
 	@CurrentTimestamp
-	private LocalDate createdOn;
+	private LocalDateTime createdOn;
 
 	private String message;
 

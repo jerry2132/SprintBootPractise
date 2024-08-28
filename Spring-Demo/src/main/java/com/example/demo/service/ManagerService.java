@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.Employee;
+import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.Manager;
 import com.example.demo.response.Response;
 
@@ -31,5 +32,9 @@ public interface ManagerService {
 	public ResponseEntity<Response<Manager>> changeProjectStatus(String status);
 	
 	public ResponseEntity<Response<List<Employee>>> getAllEmployeeWithGivenRating(int rating);
+	
+	public ResponseEntity<Response<List<InquiryChannel>>> getInquiryRequest();
+	
+	public ResponseEntity<Response<InquiryChannel>> updateInquiryStatus(int channelId , String status);
 
 }

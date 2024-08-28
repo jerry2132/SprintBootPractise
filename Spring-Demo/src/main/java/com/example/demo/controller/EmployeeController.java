@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,11 @@ public class EmployeeController {
 
 		return empService.raiseInquiryRequest(inquiryChannel);
 
+	}
+	
+	@GetMapping("/getRequestStatus")
+	public ResponseEntity<Response<List<InquiryChannel>>> getRequestStatus(){
+		return empService.getRequestStatus();
 	}
 
 }

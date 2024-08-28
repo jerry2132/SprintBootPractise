@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.Employee;
+import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.Manager;
 import com.example.demo.response.Response;
 import com.example.demo.service.ManagerService;
@@ -67,6 +69,19 @@ public class ManagerController {
 	@GetMapping("/getByRating")
 	public ResponseEntity<Response<List<Employee>>> getAllEmployeeAboveGivenRating(@RequestParam("rating") int rating) {
 		return managerService.getAllEmployeeWithGivenRating(rating);
+	}
+	
+	@GetMapping("/getInquiryRequest")
+	public ResponseEntity<Response<List<InquiryChannel>>> getInquiryRequest(){
+		return managerService.getInquiryRequest();
+	}
+	
+	@PutMapping("/updateStatus/{channelId}")
+	public ResponseEntity<Response<InquiryChannel>> updateInquirStatus(@PathVariable int channelId
+			, @RequestParam("status") String status){
+
+		return managerService.updateInquiryStatus(channelId, status);
+		
 	}
 
 }

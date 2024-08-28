@@ -24,4 +24,6 @@ public interface EmployeeService {
 	public ResponseEntity<Response<ManagerLim>> getManagerDetails();
 	
 	public ResponseEntity<Response<InquiryChannel>> raiseInquiryRequest(InquiryChannel inquiryChannel);
+	
+	public ResponseEntity<Response<List<InquiryChannel>>> getRequestStatus();
 }

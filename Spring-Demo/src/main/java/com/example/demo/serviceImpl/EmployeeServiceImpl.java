@@ -1,5 +1,6 @@
 package com.example.demo.serviceImpl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -216,6 +217,33 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Response<InquiryChannel> response = Response.<InquiryChannel>builder().status("success")
 				.message("request raised with id   " + inquiryChannel.getChannelId()).data(inquiryChannel).build();
 		return new ResponseEntity<Response<InquiryChannel>>(response, HttpStatus.ACCEPTED);
+	}
+
+	@Override
+	public ResponseEntity<Response<List<InquiryChannel>>> getRequestStatus() {
+		// TODO Auto-generated method stub
+		
+			int empId = employeeDao.findByUserName(SecurityContextHolder.getContext().
+					getAuthentication().getName()).get()
+					.getEmployeeId();
+		
+		List<InquiryChannel> inquiryChannelList =   inquiryChannelDao.getAll().stream().
+				filter(e -> e.getCreatedById()==empId).
+				sorted(Comparator.comparing(InquiryChannel::getCreatedOn).reversed()).toList();
+		
+		if(inquiryChannelList.isEmpty() || inquiryChannelList == null) {
+			Response<List<InquiryChannel>> response = Response.<List<InquiryChannel>>builder()
+					.status("error")
+					.message("no req available ")
+					.data(null).build();
+			return new ResponseEntity<Response<List<InquiryChannel>>>(response,HttpStatus.NOT_FOUND);
+		}
+		
+		Response<List<InquiryChannel>> response = Response.<List<InquiryChannel>>builder()
+				.status("success")
+				.message("data found ")
+				.data(inquiryChannelList).build();
+		return new ResponseEntity<Response<List<InquiryChannel>>>(response,HttpStatus.FOUND);
 	}
 
 }
