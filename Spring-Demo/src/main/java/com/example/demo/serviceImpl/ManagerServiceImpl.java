@@ -1,5 +1,6 @@
 package com.example.demo.serviceImpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,6 +18,7 @@ import com.example.demo.dao.EmployeeDao;
 import com.example.demo.dao.InquiryChannelDao;
 import com.example.demo.dao.ManagerDao;
 import com.example.demo.dao.ProjectDao;
+import com.example.demo.dao.WeeklyFeedBackReportDao;
 import com.example.demo.dto.Employee;
 import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.InquiryStatus;
@@ -24,6 +26,7 @@ import com.example.demo.dto.Manager;
 import com.example.demo.dto.Project;
 import com.example.demo.dto.ProjectStatus;
 import com.example.demo.dto.User;
+import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.exception.IdException;
 import com.example.demo.exception.NotAuthorized;
 import com.example.demo.response.Response;
@@ -50,6 +53,9 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private InquiryChannelDao inquiryChannelDao;
+
+	@Autowired
+	private WeeklyFeedBackReportDao weeklyFeedBackReportDao;
 
 	@Override
 	public ResponseEntity<Response<Manager>> saveManager(Manager manager) {
@@ -428,7 +434,7 @@ public class ManagerServiceImpl implements ManagerService {
 //	InquiryStatus inquiryStatus = InquiryStatus.va
 
 		inquiryChannel.setInquiryStatus(InquiryStatus.valueOf(status.toUpperCase()));
-		
+
 		inquiryChannelDao.saveInquiry(inquiryChannel);
 
 		Response<InquiryChannel> response = Response.<InquiryChannel>builder().status("success")
@@ -437,5 +443,54 @@ public class ManagerServiceImpl implements ManagerService {
 
 	}
 
+	/***************************************************************************************************************/
+
+	@Override
+	public ResponseEntity<Response<List<WeeklyFeedBackReport>>> getWeeklyFeedBackReport() {
+		// TODO Auto-generated method stub
+
+		List<WeeklyFeedBackReport> weeklyFeedBackReportList = weeklyFeedBackReportDao.findByManagerIdOrderByCreatedOn(
+				managerDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName()).get()
+						.getManagerId());
+
+		if (weeklyFeedBackReportList.isEmpty())
+			throw new IdException("no report found");
+
+		Response<List<WeeklyFeedBackReport>> response = Response.<List<WeeklyFeedBackReport>>builder()
+				.status("successs").message("report found successfully").data(weeklyFeedBackReportList).build();
+
+		return new ResponseEntity<Response<List<WeeklyFeedBackReport>>>(response, HttpStatus.FOUND);
+	}
+
+	/*************************************************************************************************************/
+
+	@Override
+	public ResponseEntity<Response<WeeklyFeedBackReport>> respondFeedbackReport(int feedbackId,
+			WeeklyFeedBackReport weeklyFeedBackReport) {
+		// TODO Auto-generated method stub
+
+		WeeklyFeedBackReport weeklyFeedBackReportDb = weeklyFeedBackReportDao.findByFeedbackId(feedbackId)
+				.orElseThrow(() -> new IdException("not found " + feedbackId));
+
+		if (managerDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName()).get()
+				.getManagerId() != weeklyFeedBackReportDb.getManagerId())
+			throw new NotAuthorized("access denied");
+
+		weeklyFeedBackReportDb.setApprovedOn(LocalDateTime.now());
+		weeklyFeedBackReportDb.setComments(weeklyFeedBackReport.getComments());
+		weeklyFeedBackReportDb.setFeedBackStatus(weeklyFeedBackReport.getFeedBackStatus());
+		weeklyFeedBackReportDb.setRating(weeklyFeedBackReport.getRating());
+		
+		weeklyFeedBackReportDao.saveFeedBack(weeklyFeedBackReportDb);
+		
+		
+		Response<WeeklyFeedBackReport> response = Response.<WeeklyFeedBackReport>builder()
+				.status("success").message("updated successfully")
+				.data(weeklyFeedBackReportDb).build();
+		
+		return new ResponseEntity<Response<WeeklyFeedBackReport>>(response,HttpStatus.OK);
+	}
+
 	/********************************************************************************************************/
+
 }

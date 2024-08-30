@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.Employee;
 import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.ManagerLim;
+import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.response.Response;
 
 @Service
@@ -26,4 +27,6 @@ public interface EmployeeService {
 	public ResponseEntity<Response<InquiryChannel>> raiseInquiryRequest(InquiryChannel inquiryChannel);
 	
 	public ResponseEntity<Response<List<InquiryChannel>>> getRequestStatus();
+	
+	public ResponseEntity<Response<WeeklyFeedBackReport>> sendFeedBack(WeeklyFeedBackReport weeklyFeedBackReport);
 }

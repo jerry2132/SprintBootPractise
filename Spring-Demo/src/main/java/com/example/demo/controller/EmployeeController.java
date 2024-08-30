@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.Employee;
 import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.ManagerLim;
+import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.response.Response;
 import com.example.demo.service.EmployeeService;
 
@@ -54,6 +55,11 @@ public class EmployeeController {
 	@GetMapping("/getRequestStatus")
 	public ResponseEntity<Response<List<InquiryChannel>>> getRequestStatus(){
 		return empService.getRequestStatus();
+	}
+	
+	@PostMapping("/sendFeedBack")
+	public ResponseEntity<Response<WeeklyFeedBackReport>> sendFeedback(@RequestBody WeeklyFeedBackReport weeklyFeedBackReport){
+		return empService.sendFeedBack(weeklyFeedBackReport);
 	}
 
 }

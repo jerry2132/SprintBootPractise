@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.Employee;
 import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.Manager;
+import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.response.Response;
 import com.example.demo.service.ManagerService;
 
@@ -70,18 +71,29 @@ public class ManagerController {
 	public ResponseEntity<Response<List<Employee>>> getAllEmployeeAboveGivenRating(@RequestParam("rating") int rating) {
 		return managerService.getAllEmployeeWithGivenRating(rating);
 	}
-	
+
 	@GetMapping("/getInquiryRequest")
-	public ResponseEntity<Response<List<InquiryChannel>>> getInquiryRequest(){
+	public ResponseEntity<Response<List<InquiryChannel>>> getInquiryRequest() {
 		return managerService.getInquiryRequest();
 	}
-	
+
 	@PutMapping("/updateStatus/{channelId}")
-	public ResponseEntity<Response<InquiryChannel>> updateInquirStatus(@PathVariable int channelId
-			, @RequestParam("status") String status){
+	public ResponseEntity<Response<InquiryChannel>> updateInquirStatus(@PathVariable int channelId,
+			@RequestParam("status") String status) {
 
 		return managerService.updateInquiryStatus(channelId, status);
-		
+
+	}
+
+	@GetMapping("/getweeklyFeedBackReport")
+	public ResponseEntity<Response<List<WeeklyFeedBackReport>>> getweeklyFeedBackReport() {
+		return managerService.getWeeklyFeedBackReport();
+	}
+
+	@PutMapping("/respondToFeedback/{feedbackId}")
+	public ResponseEntity<Response<WeeklyFeedBackReport>> respondFeedbackReport(@PathVariable int feedbackId,
+			@RequestBody WeeklyFeedBackReport weeklyFeedBackReport) {
+		return managerService.respondFeedbackReport(feedbackId, weeklyFeedBackReport);
 	}
 
 }

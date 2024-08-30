@@ -15,12 +15,15 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dao.EmployeeDao;
 import com.example.demo.dao.InquiryChannelDao;
 import com.example.demo.dao.ManagerDao;
+import com.example.demo.dao.WeeklyFeedBackReportDao;
 import com.example.demo.dto.Employee;
+import com.example.demo.dto.FeedBackStatus;
 import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.InquiryStatus;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.ManagerLim;
 import com.example.demo.dto.User;
+import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.exception.IdException;
 import com.example.demo.exception.NotAuthorized;
 import com.example.demo.response.Response;
@@ -47,6 +50,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private InquiryChannelDao inquiryChannelDao;
+	
+	@Autowired
+	private WeeklyFeedBackReportDao weeklyFeedBackReportDao;
+	
+	
 
 	@Override
 	public ResponseEntity<Response<Employee>> saveEmployee(Employee employee) {
@@ -218,6 +226,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 				.message("request raised with id   " + inquiryChannel.getChannelId()).data(inquiryChannel).build();
 		return new ResponseEntity<Response<InquiryChannel>>(response, HttpStatus.ACCEPTED);
 	}
+	
+	
+/************************************************************************************************************/	
 
 	@Override
 	public ResponseEntity<Response<List<InquiryChannel>>> getRequestStatus() {
@@ -244,6 +255,33 @@ public class EmployeeServiceImpl implements EmployeeService {
 				.message("data found ")
 				.data(inquiryChannelList).build();
 		return new ResponseEntity<Response<List<InquiryChannel>>>(response,HttpStatus.FOUND);
+	}
+	
+
+
+/************************************************************************************************************/	
+
+	@Override
+	public ResponseEntity<Response<WeeklyFeedBackReport>> sendFeedBack(WeeklyFeedBackReport weeklyFeedBackReport) {
+		// TODO Auto-generated method stub
+		
+		if(weeklyFeedBackReport.getManagerId() != getManagerDetails().getBody().getData().getManagerId()) {
+			
+			throw new IdException("no manager with this id");
+		}
+		
+		Employee employee  = employeeDao.findByUserName(SecurityContextHolder.getContext()
+				.getAuthentication().getName()).get();
+		
+		weeklyFeedBackReport.setEmployeeId(employee.getEmployeeId());
+		weeklyFeedBackReport.setFeedBackStatus(FeedBackStatus.PENDING);
+		
+		weeklyFeedBackReportDao.saveFeedBack(weeklyFeedBackReport);
+		
+		Response<WeeklyFeedBackReport> response  = Response.<WeeklyFeedBackReport>builder().status("suucess")
+				.message("feedback send suucessfully")
+				.data(weeklyFeedBackReport).build();
+		return new ResponseEntity<Response<WeeklyFeedBackReport>>(response,HttpStatus.ACCEPTED);
 	}
 
 }
