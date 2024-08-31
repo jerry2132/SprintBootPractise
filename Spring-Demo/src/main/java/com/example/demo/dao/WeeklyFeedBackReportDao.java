@@ -26,5 +26,9 @@ public class WeeklyFeedBackReportDao {
 	public Optional<WeeklyFeedBackReport> findByFeedbackId(int feedbackId){
 		return weeklyFeedBackReportRepo.findById(feedbackId);
 	}
+	
+	public List<WeeklyFeedBackReport> findByEmployeeId(int employeeId){
+		return weeklyFeedBackReportRepo.findByEmployeeIdOrderByCreatedOnDesc(employeeId);
+	}
 
 }

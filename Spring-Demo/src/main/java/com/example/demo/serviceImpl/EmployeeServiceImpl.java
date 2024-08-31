@@ -25,6 +25,7 @@ import com.example.demo.dto.ManagerLim;
 import com.example.demo.dto.User;
 import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.exception.IdException;
+import com.example.demo.exception.NoDataFound;
 import com.example.demo.exception.NotAuthorized;
 import com.example.demo.response.Response;
 import com.example.demo.service.EmployeeService;
@@ -50,11 +51,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private InquiryChannelDao inquiryChannelDao;
-	
+
 	@Autowired
 	private WeeklyFeedBackReportDao weeklyFeedBackReportDao;
-	
-	
 
 	@Override
 	public ResponseEntity<Response<Employee>> saveEmployee(Employee employee) {
@@ -226,62 +225,75 @@ public class EmployeeServiceImpl implements EmployeeService {
 				.message("request raised with id   " + inquiryChannel.getChannelId()).data(inquiryChannel).build();
 		return new ResponseEntity<Response<InquiryChannel>>(response, HttpStatus.ACCEPTED);
 	}
-	
-	
-/************************************************************************************************************/	
+
+	/************************************************************************************************************/
 
 	@Override
 	public ResponseEntity<Response<List<InquiryChannel>>> getRequestStatus() {
 		// TODO Auto-generated method stub
-		
-			int empId = employeeDao.findByUserName(SecurityContextHolder.getContext().
-					getAuthentication().getName()).get()
-					.getEmployeeId();
-		
-		List<InquiryChannel> inquiryChannelList =   inquiryChannelDao.getAll().stream().
-				filter(e -> e.getCreatedById()==empId).
-				sorted(Comparator.comparing(InquiryChannel::getCreatedOn).reversed()).toList();
-		
-		if(inquiryChannelList.isEmpty() || inquiryChannelList == null) {
-			Response<List<InquiryChannel>> response = Response.<List<InquiryChannel>>builder()
-					.status("error")
-					.message("no req available ")
-					.data(null).build();
-			return new ResponseEntity<Response<List<InquiryChannel>>>(response,HttpStatus.NOT_FOUND);
+
+		int empId = employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName()).get()
+				.getEmployeeId();
+
+		List<InquiryChannel> inquiryChannelList = inquiryChannelDao.getAll().stream()
+				.filter(e -> e.getCreatedById() == empId)
+				.sorted(Comparator.comparing(InquiryChannel::getCreatedOn).reversed()).toList();
+
+		if (inquiryChannelList.isEmpty() || inquiryChannelList == null) {
+			Response<List<InquiryChannel>> response = Response.<List<InquiryChannel>>builder().status("error")
+					.message("no req available ").data(null).build();
+			return new ResponseEntity<Response<List<InquiryChannel>>>(response, HttpStatus.NOT_FOUND);
 		}
-		
-		Response<List<InquiryChannel>> response = Response.<List<InquiryChannel>>builder()
-				.status("success")
-				.message("data found ")
-				.data(inquiryChannelList).build();
-		return new ResponseEntity<Response<List<InquiryChannel>>>(response,HttpStatus.FOUND);
+
+		Response<List<InquiryChannel>> response = Response.<List<InquiryChannel>>builder().status("success")
+				.message("data found ").data(inquiryChannelList).build();
+		return new ResponseEntity<Response<List<InquiryChannel>>>(response, HttpStatus.FOUND);
 	}
-	
 
-
-/************************************************************************************************************/	
+	/************************************************************************************************************/
 
 	@Override
 	public ResponseEntity<Response<WeeklyFeedBackReport>> sendFeedBack(WeeklyFeedBackReport weeklyFeedBackReport) {
 		// TODO Auto-generated method stub
-		
-		if(weeklyFeedBackReport.getManagerId() != getManagerDetails().getBody().getData().getManagerId()) {
-			
+
+		if (weeklyFeedBackReport.getManagerId() != getManagerDetails().getBody().getData().getManagerId()) {
+
 			throw new IdException("no manager with this id");
 		}
-		
-		Employee employee  = employeeDao.findByUserName(SecurityContextHolder.getContext()
-				.getAuthentication().getName()).get();
-		
+
+		Employee employee = employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName())
+				.get();
+
 		weeklyFeedBackReport.setEmployeeId(employee.getEmployeeId());
 		weeklyFeedBackReport.setFeedBackStatus(FeedBackStatus.PENDING);
-		
+
 		weeklyFeedBackReportDao.saveFeedBack(weeklyFeedBackReport);
+
+		Response<WeeklyFeedBackReport> response = Response.<WeeklyFeedBackReport>builder().status("suucess")
+				.message("feedback send suucessfully").data(weeklyFeedBackReport).build();
+		return new ResponseEntity<Response<WeeklyFeedBackReport>>(response, HttpStatus.ACCEPTED);
+	}
+
+	/************************************************************************************************************/
+
+	@Override
+	public ResponseEntity<Response<List<WeeklyFeedBackReport>>> viewFeedbackStatus() {
+		// TODO Auto-generated method stub
+
+		int employeeId = employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName())
+				.get().getEmployeeId();
 		
-		Response<WeeklyFeedBackReport> response  = Response.<WeeklyFeedBackReport>builder().status("suucess")
-				.message("feedback send suucessfully")
-				.data(weeklyFeedBackReport).build();
-		return new ResponseEntity<Response<WeeklyFeedBackReport>>(response,HttpStatus.ACCEPTED);
+	List<WeeklyFeedBackReport> weeklyFeedBackReportList = 	weeklyFeedBackReportDao.findByEmployeeId(employeeId);
+		
+	if(weeklyFeedBackReportList.isEmpty())
+		throw new NoDataFound("doesnt contain any report ");
+	
+	Response<List<WeeklyFeedBackReport>> response = Response.<List<WeeklyFeedBackReport>>builder()
+			.status("success")
+			.message("report found")
+			.data(weeklyFeedBackReportList).build();
+	
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
 }

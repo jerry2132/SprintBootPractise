@@ -11,4 +11,6 @@ public interface WeeklyFeedBackReportRepo extends JpaRepository<WeeklyFeedBackRe
 	
 	List<WeeklyFeedBackReport> findByManagerIdOrderByCreatedOnDesc(int managerId);
 	
+	List<WeeklyFeedBackReport> findByEmployeeIdOrderByCreatedOnDesc(int employeeId);
+	
 }

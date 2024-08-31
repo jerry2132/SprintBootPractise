@@ -29,4 +29,6 @@ public interface EmployeeService {
 	public ResponseEntity<Response<List<InquiryChannel>>> getRequestStatus();
 	
 	public ResponseEntity<Response<WeeklyFeedBackReport>> sendFeedBack(WeeklyFeedBackReport weeklyFeedBackReport);
+	
+	public ResponseEntity<Response<List<WeeklyFeedBackReport>>> viewFeedbackStatus();
 }

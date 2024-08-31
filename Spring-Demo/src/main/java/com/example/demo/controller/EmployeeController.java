@@ -61,5 +61,10 @@ public class EmployeeController {
 	public ResponseEntity<Response<WeeklyFeedBackReport>> sendFeedback(@RequestBody WeeklyFeedBackReport weeklyFeedBackReport){
 		return empService.sendFeedBack(weeklyFeedBackReport);
 	}
+	
+	@GetMapping("/viewFeedbackStatus")
+	public ResponseEntity<Response<List<WeeklyFeedBackReport>>> viewFeedbackStatus(){
+		return empService.viewFeedbackStatus();
+	}
 
 }
