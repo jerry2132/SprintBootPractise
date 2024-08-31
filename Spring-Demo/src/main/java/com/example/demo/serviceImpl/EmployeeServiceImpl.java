@@ -1,5 +1,6 @@
 package com.example.demo.serviceImpl;
 
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dao.EmployeeDao;
 import com.example.demo.dao.InquiryChannelDao;
 import com.example.demo.dao.ManagerDao;
+import com.example.demo.dao.TimeSheetDao;
 import com.example.demo.dao.WeeklyFeedBackReportDao;
 import com.example.demo.dto.Employee;
 import com.example.demo.dto.FeedBackStatus;
@@ -22,11 +24,13 @@ import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.InquiryStatus;
 import com.example.demo.dto.Manager;
 import com.example.demo.dto.ManagerLim;
+import com.example.demo.dto.TimeSheet;
 import com.example.demo.dto.User;
 import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.exception.IdException;
 import com.example.demo.exception.NoDataFound;
 import com.example.demo.exception.NotAuthorized;
+import com.example.demo.repo.TimeSheetRepo;
 import com.example.demo.response.Response;
 import com.example.demo.service.EmployeeService;
 import com.example.demo.service.RegistrationService;
@@ -54,6 +58,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private WeeklyFeedBackReportDao weeklyFeedBackReportDao;
+	
+	@Autowired
+	private TimeSheetDao timeSheetDao;
 
 	@Override
 	public ResponseEntity<Response<Employee>> saveEmployee(Employee employee) {
@@ -282,18 +289,54 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		int employeeId = employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName())
 				.get().getEmployeeId();
-		
-	List<WeeklyFeedBackReport> weeklyFeedBackReportList = 	weeklyFeedBackReportDao.findByEmployeeId(employeeId);
-		
-	if(weeklyFeedBackReportList.isEmpty())
-		throw new NoDataFound("doesnt contain any report ");
-	
-	Response<List<WeeklyFeedBackReport>> response = Response.<List<WeeklyFeedBackReport>>builder()
-			.status("success")
-			.message("report found")
-			.data(weeklyFeedBackReportList).build();
-	
-		return new ResponseEntity<>(response,HttpStatus.OK);
+
+		List<WeeklyFeedBackReport> weeklyFeedBackReportList = weeklyFeedBackReportDao.findByEmployeeId(employeeId);
+
+		if (weeklyFeedBackReportList.isEmpty())
+			throw new NoDataFound("doesnt contain any report ");
+
+		Response<List<WeeklyFeedBackReport>> response = Response.<List<WeeklyFeedBackReport>>builder().status("success")
+				.message("report found").data(weeklyFeedBackReportList).build();
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+
+	/************************************************************************************************************/
+
+	@Override
+	public ResponseEntity<Response<TimeSheet>> fillTimeSheet(TimeSheet timeSheet) {
+		// TODO Auto-generated method stub
+
+		Employee employee = employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName())
+				.get();
+		
+		timeSheet.setManagerId(getManagerDetails().getBody().getData().getManagerId());
+
+		timeSheet.setEmployeeId(employee.getEmployeeId());
+		timeSheet.setEmployeeName(employee.getFirstName() +" "+ employee.getLastName());
+
+		timeSheet.getDailyEntries().stream().filter(e -> e.getCheckInTime() != null && e.getCheckOutTime() != null)
+				.forEach(e -> {
+					Duration duration = Duration.between(e.getCheckInTime(),e.getCheckOutTime());
+					e.setHoursWorked(duration.toMinutes() / 60.0);
+				});
+
+		timeSheet.setTotalHoursWorked(timeSheet.getDailyEntries().stream().mapToDouble(e -> e.getHoursWorked()).sum());
+
+		timeSheet.setStatus(FeedBackStatus.PENDING);
+		
+		timeSheetDao.saveTimeSheet(timeSheet);
+		
+		Response<TimeSheet> response = Response.<TimeSheet>builder().status("successs")
+				.message("timesheet filled")
+				.data(timeSheet).build();
+		
+		return new ResponseEntity<Response<TimeSheet>>(response,HttpStatus.OK);
+	}
+	
+	
+/************************************************************************************************************/	
+
+
 
 }

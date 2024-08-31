@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.Employee;
 import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.ManagerLim;
+import com.example.demo.dto.TimeSheet;
 import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.response.Response;
 import com.example.demo.service.EmployeeService;
@@ -65,6 +68,17 @@ public class EmployeeController {
 	@GetMapping("/viewFeedbackStatus")
 	public ResponseEntity<Response<List<WeeklyFeedBackReport>>> viewFeedbackStatus(){
 		return empService.viewFeedbackStatus();
+	}
+	
+	@PostMapping("/fillTimeSheet")
+	public ResponseEntity<Response<TimeSheet>> fillTimeSheet(@RequestBody TimeSheet timeSheet){
+		return empService.fillTimeSheet(timeSheet);
+	}
+	
+	@PutMapping("/updateTimeSheet")
+	public ResponseEntity<Response<TimeSheet>> updateTimeSheet(
+			@RequestBody TimeSheet timeSheet){
+		return empService.fillTimeSheet(timeSheet);
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.Employee;
 import com.example.demo.dto.InquiryChannel;
 import com.example.demo.dto.ManagerLim;
+import com.example.demo.dto.TimeSheet;
 import com.example.demo.dto.WeeklyFeedBackReport;
 import com.example.demo.response.Response;
 
@@ -31,4 +32,8 @@ public interface EmployeeService {
 	public ResponseEntity<Response<WeeklyFeedBackReport>> sendFeedBack(WeeklyFeedBackReport weeklyFeedBackReport);
 	
 	public ResponseEntity<Response<List<WeeklyFeedBackReport>>> viewFeedbackStatus();
+	
+	public ResponseEntity<Response<TimeSheet>> fillTimeSheet(TimeSheet timeSheet);
+	
+//	public ResponseEntity<Response<TimeSheet>> updateTimeSheet(int timeSheetId , TimeSheet timesheet);
 }

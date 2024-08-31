@@ -21,17 +21,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WeeklyFeedBackReport {
-	
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "feedback_seq")
 	@SequenceGenerator(name = "feedback_seq", sequenceName = "feedback_sequence", initialValue = 9000)
 	private int feedbackId;
 
-
-	
 	private int employeeId;
-
 
 	private int managerId;
 
@@ -39,9 +35,9 @@ public class WeeklyFeedBackReport {
 	private LocalDateTime createdOn;
 
 	private LocalDate weekEnding;
-	
+
 	private String content;
-	
+
 	private int rating;
 
 	@Enumerated(EnumType.STRING)
