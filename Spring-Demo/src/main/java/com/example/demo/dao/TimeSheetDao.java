@@ -1,5 +1,6 @@
 package com.example.demo.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,5 +21,13 @@ public class TimeSheetDao {
 	
 	public Optional<TimeSheet> findById(int timeSheetId){
 		return timeSheetRepo.findById(timeSheetId);
+	}
+	
+	public List<TimeSheet> findByManagerId(int managerId){
+		return timeSheetRepo.findByManagerIdOrderByWeekEndDateDesc(managerId);
+	}
+	
+	public List<TimeSheet> findByEmployeeId(int employeeId){
+		return timeSheetRepo.findByEmployeeIdOrderByWeekEndDateDesc(employeeId);
 	}
 }

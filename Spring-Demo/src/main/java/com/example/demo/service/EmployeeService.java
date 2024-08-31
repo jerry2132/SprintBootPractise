@@ -36,4 +36,6 @@ public interface EmployeeService {
 	public ResponseEntity<Response<TimeSheet>> fillTimeSheet(TimeSheet timeSheet);
 	
 //	public ResponseEntity<Response<TimeSheet>> updateTimeSheet(int timeSheetId , TimeSheet timesheet);
+	
+	public ResponseEntity<Response<List<TimeSheet>>> viewTimeSheet();
 }

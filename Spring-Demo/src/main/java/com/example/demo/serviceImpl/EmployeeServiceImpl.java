@@ -58,7 +58,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private WeeklyFeedBackReportDao weeklyFeedBackReportDao;
-	
+
 	@Autowired
 	private TimeSheetDao timeSheetDao;
 
@@ -309,34 +309,47 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		Employee employee = employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName())
 				.get();
-		
+
 		timeSheet.setManagerId(getManagerDetails().getBody().getData().getManagerId());
 
 		timeSheet.setEmployeeId(employee.getEmployeeId());
-		timeSheet.setEmployeeName(employee.getFirstName() +" "+ employee.getLastName());
+		timeSheet.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
 
 		timeSheet.getDailyEntries().stream().filter(e -> e.getCheckInTime() != null && e.getCheckOutTime() != null)
 				.forEach(e -> {
-					Duration duration = Duration.between(e.getCheckInTime(),e.getCheckOutTime());
+					Duration duration = Duration.between(e.getCheckInTime(), e.getCheckOutTime());
 					e.setHoursWorked(duration.toMinutes() / 60.0);
 				});
 
 		timeSheet.setTotalHoursWorked(timeSheet.getDailyEntries().stream().mapToDouble(e -> e.getHoursWorked()).sum());
 
 		timeSheet.setStatus(FeedBackStatus.PENDING);
-		
+
 		timeSheetDao.saveTimeSheet(timeSheet);
-		
-		Response<TimeSheet> response = Response.<TimeSheet>builder().status("successs")
-				.message("timesheet filled")
+
+		Response<TimeSheet> response = Response.<TimeSheet>builder().status("successs").message("timesheet filled")
 				.data(timeSheet).build();
-		
-		return new ResponseEntity<Response<TimeSheet>>(response,HttpStatus.OK);
+
+		return new ResponseEntity<Response<TimeSheet>>(response, HttpStatus.OK);
 	}
-	
-	
-/************************************************************************************************************/	
 
+	/***********************************************************************************************************/
 
+	@Override
+	public ResponseEntity<Response<List<TimeSheet>>> viewTimeSheet() {
+		// TODO Auto-generated method stub
+
+		List<TimeSheet> timeSheetList = timeSheetDao.findByEmployeeId(
+				employeeDao.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName()).get()
+					.getEmployeeId());
+
+		Response<List<TimeSheet>> response = Response.<List<TimeSheet>>builder().status("success")
+				.message("timesheet list")
+				.data(timeSheetList).build();
+		
+		return new ResponseEntity<Response<List<TimeSheet>>>(response,HttpStatus.OK);
+	}
+
+	/************************************************************************************************************/
 
 }

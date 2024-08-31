@@ -75,6 +75,11 @@ public class EmployeeController {
 		return empService.fillTimeSheet(timeSheet);
 	}
 	
+	@GetMapping("/viewTimeSheet")
+	public ResponseEntity<Response<List<TimeSheet>>> viewTimeSheet(){
+		return empService.viewTimeSheet();
+	}
+	
 	@PutMapping("/updateTimeSheet")
 	public ResponseEntity<Response<TimeSheet>> updateTimeSheet(
 			@RequestBody TimeSheet timeSheet){
